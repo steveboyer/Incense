@@ -1,4 +1,4 @@
-package net.sereko.incense.Tasks;
+package net.sereko.incense.tasks;
 
 import android.provider.BaseColumns;
 

@@ -1,4 +1,4 @@
-package net.sereko.incense.Sensors;
+package net.sereko.incense.model;
 
 /**
  * Created by steve on 1/25/17.

@@ -1,4 +1,4 @@
-package net.sereko.incense.Sensors;
+package net.sereko.incense.sensors;
 
 import android.app.Activity;
 import android.content.Context;

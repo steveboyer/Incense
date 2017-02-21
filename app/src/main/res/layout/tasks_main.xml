@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:fitsSystemWindows="true"
-    tools:context="net.sereko.incense.Tasks.TaskActivity" >
+    tools:context="net.sereko.incense.tasks.TaskActivity" >
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

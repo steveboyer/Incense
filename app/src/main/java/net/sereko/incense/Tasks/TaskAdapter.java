@@ -1,4 +1,4 @@
-package net.sereko.incense.Tasks;
+package net.sereko.incense.tasks;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.sereko.incense.R;
+import net.sereko.incense.model.Task;
 
 import java.util.ArrayList;
 
@@ -18,18 +19,18 @@ import java.util.ArrayList;
 
 public class TaskAdapter extends BaseAdapter {
 
-    Context context;
-    ArrayList<Task> tasks;
+    private Context context;
+    private ArrayList<Task> tasks;
 
-    LayoutInflater inflater;
-    View.OnClickListener listener;
+    private LayoutInflater inflater;
+    private TaskPresenter presenter;
 
-    public TaskAdapter(Context context, ArrayList<Task> tasks, View.OnClickListener listener) {
+    public TaskAdapter(Context context, ArrayList<Task> tasks, TaskPresenter presenter) {
         this.context = context;
         this.tasks = tasks;
-        this.listener = listener;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.presenter = presenter;
     }
 
     @Override
@@ -57,6 +58,8 @@ public class TaskAdapter extends BaseAdapter {
         TextView text = (TextView) vi.findViewById(R.id.text);
 
         Button doAction = (Button) vi.findViewById(R.id.didit_button);
+
+        ClickListener listener = new ClickListener(i);
 
         doAction.setOnClickListener(listener);
 

@@ -1,4 +1,4 @@
-package net.sereko.incense.Sensors;
+package net.sereko.incense.sensors;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import net.sereko.incense.R;
+import net.sereko.incense.model.Sensor;
 
 import java.util.ArrayList;
 import java.util.List;

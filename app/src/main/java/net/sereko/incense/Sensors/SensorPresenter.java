@@ -1,4 +1,4 @@
-package net.sereko.incense.Sensors;
+package net.sereko.incense.sensors;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -13,11 +13,11 @@ import net.sereko.incense.Presenter;
 
 public class SensorPresenter implements Presenter, SensorEventListener{
 
-    private SensorActivity activity;
+    private Activity activity;
 
     @Override
     public void attachView(Activity activity) {
-
+        this.activity = activity;
     }
 
     @Override

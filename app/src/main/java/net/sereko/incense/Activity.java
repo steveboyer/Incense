@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import net.sereko.incense.service.TaskService;
+
 import icepick.Icepick;
 
 /**
@@ -15,6 +17,8 @@ import icepick.Icepick;
 
 public abstract class Activity extends AppCompatActivity {
     private String TAG;
+
+    private TaskService taskService;
 
 
 

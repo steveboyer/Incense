@@ -1,4 +1,4 @@
-package net.sereko.incense.Tasks;
+package net.sereko.incense.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,17 +20,6 @@ public class Task {
         this.type = "Cat";
         this.created = Calendar.getInstance();
         this.completed = new ArrayList<>();
-
-        CompletedTask task = new CompletedTask();
-        task.setFoodType("Wet");
-        task.setAmount(1.0);
-
-        CompletedTask task1 = new CompletedTask();
-        task1.setFoodType("Dry");
-        task1.setAmount(1.3);
-
-        completed.add(task);
-        completed.add(task1);
     }
 
     public String getName() {
@@ -47,6 +36,12 @@ public class Task {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void addCompletedTask(){
+        CompletedTask t = new CompletedTask();
+
+        completed.add(t);
     }
 
     @Override
