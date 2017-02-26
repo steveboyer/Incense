@@ -43,8 +43,6 @@ public class SKDialog extends DialogFragment {
                     });
 
                     return builder.create();
-
-
         }
 
 

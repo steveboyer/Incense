@@ -13,14 +13,24 @@ public class Task {
     private Integer id;
     private Calendar created;
 
-    private ArrayList<CompletedTask> completed;
-
     public Task(){
         this.name = "Fed Cat";
         this.type = "Cat";
         this.created = Calendar.getInstance();
         this.completed = new ArrayList<>();
     }
+
+    public ArrayList<CompletedTask> getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(ArrayList<CompletedTask> completed) {
+        this.completed = completed;
+    }
+
+    private ArrayList<CompletedTask> completed;
+
+
 
     public String getName() {
         return name;

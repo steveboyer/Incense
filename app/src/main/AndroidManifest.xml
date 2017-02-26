@@ -7,7 +7,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".SKApplication">
+        <meta-data android:name="AA_DB_NAME" android:value="Pickrand" />
+        <meta-data android:name="AA_DB_VERSION" android:value="5" />
         <activity
             android:name=".tasks.TaskActivity"
             android:label="@string/app_name"

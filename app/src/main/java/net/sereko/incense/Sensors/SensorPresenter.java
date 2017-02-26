@@ -4,26 +4,23 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
-import net.sereko.incense.Activity;
-import net.sereko.incense.Presenter;
-
 /**
  * Created by steve on 1/25/17.
  */
 
-public class SensorPresenter implements Presenter, SensorEventListener{
+public class SensorPresenter implements SensorEventListener {
 
-    private Activity activity;
+   // private Activity activity;
 
-    @Override
-    public void attachView(Activity activity) {
-        this.activity = activity;
-    }
+//    @Override
+//    public void attachView(Activity activity) {
+//        this.activity = activity;
+//    }
+//
+//    @Override
+//    public void detachView() {
 
-    @Override
-    public void detachView() {
-
-    }
+    //}
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {

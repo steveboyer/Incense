@@ -1,5 +1,7 @@
 package net.sereko.incense.service;
 
+import android.util.Log;
+
 import net.sereko.incense.model.Task;
 
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import rx.Subscriber;
  */
 
 public class TaskService {
+    private static final String TAG = TaskService.class.getSimpleName();
+
     public TaskService(){
         super();
     }
@@ -23,15 +27,16 @@ public class TaskService {
             public void call(Subscriber<? super List<Task>> subscriber){
                 //Simulate some latency
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     subscriber.onError(e);
                 }
 
                 List<Task> tasks = new ArrayList<>();
-                for(int i = 0; i < 50; i++){
+                for(int i = 0; i < 2; i++){
                     Task t = new Task();
                     t.setName("Name " + i);
+                    Log.d(TAG, t.getName());
                     t.setId(i);
                     tasks.add(t);
                 }
