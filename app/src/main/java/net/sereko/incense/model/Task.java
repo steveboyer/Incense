@@ -1,22 +1,38 @@
 package net.sereko.incense.model;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
  * Created by steve on 2/15/17.
  */
+@Table(name = "Tasks")
+public class Task extends Model{
 
-public class Task {
+    @Column(name = "Name")
     private String name;
-    private String type;
-    private Integer id;
-    private Calendar created;
 
-    public Task(){
+    @Column(name = "Type")
+    private String type;
+
+    private ArrayList<CompletedTask> completed;
+
+
+
+//    @Column(name = "created")
+//    private Calendar created;
+
+
+
+    public Task()  {
+        super();
         this.name = "Fed Cat";
         this.type = "Cat";
-        this.created = Calendar.getInstance();
+        //this.created = Calendar.getInstance();
         this.completed = new ArrayList<>();
     }
 
@@ -28,7 +44,7 @@ public class Task {
         this.completed = completed;
     }
 
-    private ArrayList<CompletedTask> completed;
+
 
 
 
@@ -40,13 +56,10 @@ public class Task {
         this.name = name;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    //public void setId(Integer id) {
+//        this.id = id;
+//    }
 
     public void addCompletedTask(){
         CompletedTask t = new CompletedTask();

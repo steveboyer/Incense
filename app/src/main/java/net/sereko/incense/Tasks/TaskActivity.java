@@ -27,7 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 
-public class TaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IView<List<Task>> {
+public class TaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IView<List<Task>, Task> {
     private static final String TAG = TaskActivity.class.getSimpleName();
 
     @Bind(R.id.listview)
@@ -65,6 +65,10 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
 
         adapter = new TaskAdapter(this, new ArrayList<Task>());
         listview.setAdapter(adapter);
+
+        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        //getWindow().setEnterTransition(new Explode());
+
         presenter.start();
     }
 
@@ -95,7 +99,8 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -116,26 +121,12 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onDestroy();
         presenter.finish();
     }
-//
-//    public void onItemsNext(){
-//
-//    }
-//
-//    public void onItemsError(Throwable throwable){
-//
-//    }
-
-
-    public void setProgressPercent(int progress){
-
-    }
 
 
     @Override
     protected void onPause() {
         super.onPause();
     }
-
 
 
     @Override
@@ -145,9 +136,14 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void setModel(List<Task> tasks) {
-        adapter.clear();
+        //adapter.clear();
         adapter.addAll(tasks);
     }
+
+    public void addItem(Task task){
+        adapter.addAll(task);
+    }
+
 
     @Override
     public void error(Throwable t) {

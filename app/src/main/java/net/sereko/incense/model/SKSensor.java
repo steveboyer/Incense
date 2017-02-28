@@ -4,12 +4,12 @@ package net.sereko.incense.model;
  * Created by steve on 1/25/17.
  */
 
-public class Sensor {
+public class SKSensor {
 
     private String name;
     private String value;
 
-    public Sensor(String name){
+    public SKSensor(String name){
         this.name = name;
     }
 

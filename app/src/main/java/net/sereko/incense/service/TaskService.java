@@ -37,7 +37,6 @@ public class TaskService {
                     Task t = new Task();
                     t.setName("Name " + i);
                     Log.d(TAG, t.getName());
-                    t.setId(i);
                     tasks.add(t);
                 }
 

@@ -3,6 +3,7 @@ package net.sereko.incense.tasks;
 import android.util.Log;
 import android.view.View;
 
+import net.sereko.incense.R;
 import net.sereko.incense.model.Task;
 import net.sereko.incense.presenter.IPresenter;
 import net.sereko.incense.service.TaskService;
@@ -20,17 +21,17 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 2/20/17.
  */
 
-public class TaskPresenter implements IPresenter<List<Task>>, View.OnClickListener {
+public class TaskPresenter implements IPresenter<List<Task>, Task>, View.OnClickListener {
     private final String TAG = TaskPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private TaskService taskService;
     private IScheduler scheduler;
-    private IView<List<Task>> view;
+    private IView<List<Task>,Task> taskView;
 
-    TaskPresenter(TaskService service, IScheduler scheduler, IView<List<Task>> view){
+    TaskPresenter(TaskService service, IScheduler scheduler, IView<List<Task>, Task> view){
         super();
         this.taskService = service;
-        this.view = view;
+        this.taskView = view;
 
         //By using this scheduler we can run the same presenter in various ways
         //When run in Android land we run the work asynchronously and push results to the UI thread
@@ -43,26 +44,26 @@ public class TaskPresenter implements IPresenter<List<Task>>, View.OnClickListen
             @Override
             public void onStart(){
                 super.onStart();
-                view.setLoading(true);
+                taskView.setLoading(true);
                 Log.d(TAG, "}onStart");
             }
 
             @Override
             public void onCompleted() {
-                view.setLoading(false);
+                taskView.setLoading(false);
                 Log.d(TAG, "}onCompleted");
             }
 
             @Override
             public void onError(Throwable e) {
-                view.setLoading(false);
-                view.error(e);
+                taskView.setLoading(false);
+                taskView.error(e);
                 Log.d(TAG, "}onError");
             }
 
             @Override
             public void onNext(List<Task> tasks) {
-                view.setModel(tasks);
+                taskView.setModel(tasks);
                 Log.d(TAG, "}onNext");
             }
         };
@@ -77,13 +78,13 @@ public class TaskPresenter implements IPresenter<List<Task>>, View.OnClickListen
     @Override
     public void finish() {
         subscription.unsubscribe();
-        this.view = null;
+        this.taskView = null;
         Log.d(TAG, "}finish()");
     }
 
     @Override
-    public void setView(IView<List<Task>> view) {
-        this.view = view;
+    public void setView(IView<List<Task>, Task> view) {
+        this.taskView = view;
         Log.d(TAG, "}setView()");
     }
 
@@ -100,7 +101,10 @@ public class TaskPresenter implements IPresenter<List<Task>>, View.OnClickListen
         int id = view.getId();
 
         switch (id){
-            case 1:
+            case R.id.fab:
+                Task t = new Task();
+                t.setName("HEllo");
+                taskView.addItem(t);
                 break;
             default:
                 throw new RuntimeException();

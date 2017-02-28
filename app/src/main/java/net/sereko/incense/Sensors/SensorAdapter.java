@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import net.sereko.incense.R;
-import net.sereko.incense.model.Sensor;
+import net.sereko.incense.model.SKSensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,21 +20,19 @@ import java.util.List;
  * Created by steve on 1/25/17.
  */
 
-public class SensorAdapter extends ArrayAdapter<Sensor> {
+public class SensorAdapter extends ArrayAdapter<SKSensor> {
 
     private Context context;
-    private List<Sensor> sensors;
+    private List<SKSensor> sensors;
 
-    public SensorAdapter(Context context, int resource, ArrayList<Sensor> sensors) {
-        super(context, resource, sensors);
-        this.context = context;
-        this.sensors = sensors;
+    public SensorAdapter(Context context, ArrayList<SKSensor> sensors) {
+        super(context, 0, sensors);
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent){
-        Sensor sensor = sensors.get(position);
+        SKSensor sensor = sensors.get(position);
 
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.sensor_layout, null);
