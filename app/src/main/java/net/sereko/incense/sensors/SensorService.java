@@ -31,11 +31,11 @@ public class SensorService {
                 }
 
                 List<SKSensor> sensors = new ArrayList<>();
-
+                sensors.add(new SKSensor(""));
                 // @TODO
                 // Load sensors from prefs/db
 
-                
+
 
                 subscriber.onNext(sensors);
                 subscriber.onCompleted();

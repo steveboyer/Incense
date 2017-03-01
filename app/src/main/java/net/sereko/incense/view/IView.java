@@ -5,6 +5,7 @@ package net.sereko.incense.view;
  */
 
 public interface IView<T,V> {
+
     void setLoading(boolean isLoading);
     void setModel(T object);
     void addItem(V object);

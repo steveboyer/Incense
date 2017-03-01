@@ -2,19 +2,24 @@ package net.sereko.incense.sensors;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import net.sereko.incense.R;
 import net.sereko.incense.model.SKSensor;
+import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -28,6 +33,12 @@ import icepick.Icepick;
  */
 
 public class SensorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IView<List<SKSensor>, SKSensor> {
+
+    private final String TAG = SensorActivity.class.getSimpleName();
+
+    @Bind(R.id.loading)
+    ProgressBar loadingView;
+
     @Bind(R.id.listview)
     ListView listView;
 
@@ -35,11 +46,19 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
+    @Bind(R.id.fab)
+    FloatingActionButton floatingActionButton;
+
+
     @Inject
     SensorService service;
 
     @Inject
     IScheduler scheduler;
+
+    private SensorPresenter presenter;
+    private SensorAdapter adapter;
+
     // @TODO
     // Loading, floating button
 
@@ -49,7 +68,20 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
 
         setContentView(R.layout.tasks_main);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        scheduler = new AppScheduler();
+        service = new SensorService();
+
+        presenter = new SensorPresenter(service, scheduler, this, this);
+        floatingActionButton.setOnClickListener(presenter);
+
+        presenter.setView(this);
+        adapter = new SensorAdapter(this, new ArrayList<SKSensor>());
+        listView.setAdapter(adapter);
+
+        presenter.start();
 
     }
 
@@ -88,9 +120,6 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
 
-    private final String TAG = SensorActivity.class.getSimpleName();
-
-
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -104,21 +133,24 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void setLoading(boolean isLoading) {
+        loadingView.setVisibility(isLoading ? android.view.View.VISIBLE : android.view.View.GONE);
 
     }
 
     @Override
     public void setModel(List<SKSensor> object) {
-
+        adapter.addAll(object);
     }
 
     @Override
     public void addItem(SKSensor object) {
-
+        adapter.addAll(object);
     }
 
     @Override
     public void error(Throwable t) {
 
     }
+
+
 }
