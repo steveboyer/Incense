@@ -1,4 +1,4 @@
-package net.sereko.incense.sensors;
+package net.sereko.incense.stopwatch;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,9 +19,9 @@ import rx.Subscriber;
  * Created by steve on 2/27/17.
  */
 
-public class SensorService{
+public class StopwatchService {
 
-    private static final String TAG = SensorService.class.getSimpleName();
+    private static final String TAG = StopwatchService.class.getSimpleName();
 
     public SensorManager sensorManager;
     private View<List<SKSensor>, SKSensor> view;
@@ -89,7 +89,7 @@ public class SensorService{
         }
     }
 
-    public SensorService(View<List<SKSensor>, SKSensor> view, SensorManager sensorManager) {
+    public StopwatchService(View<List<SKSensor>, SKSensor> view, SensorManager sensorManager) {
         super();
         this.view = view;
         this.sensorManager = sensorManager;

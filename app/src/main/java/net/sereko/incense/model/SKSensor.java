@@ -1,8 +1,6 @@
 package net.sereko.incense.model;
 
-import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorManager;
 
 /**
  * Created by steve on 1/25/17.
@@ -10,13 +8,20 @@ import android.hardware.SensorManager;
 
 public class SKSensor {
 
+
+
     private String name;
-    private String value;
+    public float value;
+    public float x_val;
+    public float y_val;
+    public float z_val;
     private Sensor sensor;
 
-    public SKSensor(String name){
-        this.name = name;
+    private final String TAG = SKSensor.class.getSimpleName();
 
+    public SKSensor(String name, Sensor sensor){
+        this.name = name;
+        this.sensor = sensor;
     }
 
     public String getName() {
@@ -27,16 +32,69 @@ public class SKSensor {
         this.name = name;
     }
 
-    public String getValue() {
+    public void setSensor(Sensor sensor){
+        this.sensor = sensor;
+    }
+
+
+
+    public String getString (float f){
+        return Float.toString(f);
+    }
+
+    public float getValue(){
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(float value){
         this.value = value;
     }
 
-    public void setSensor(){
+    public float getX_val() {
+        return x_val;
+    }
 
+    public void setX_val(float x_val) {
+        this.x_val = x_val;
+    }
+
+    public float getY_val() {
+        return y_val;
+    }
+
+    public void setY_val(float y_val) {
+        this.y_val = y_val;
+    }
+
+    public float getZ_val() {
+        return z_val;
+    }
+
+    public void setZ_val(float z_val) {
+        this.z_val = z_val;
+    }
+
+    public void setValues(float x_val, float y_val, float z_val){
+        this.x_val = x_val;
+        this.y_val = y_val;
+        this.z_val = z_val;
+    }
+
+
+    public Sensor getSensor(){
+        return this.sensor;
+    }
+
+    public class Truple<T> {
+        T x;
+        T y;
+        T z;
+
+        Truple(T x, T y, T z){
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
     }
 
 }

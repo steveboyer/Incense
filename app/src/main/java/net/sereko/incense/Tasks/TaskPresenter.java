@@ -1,14 +1,12 @@
 package net.sereko.incense.tasks;
 
 import android.util.Log;
-import android.view.View;
 
 import net.sereko.incense.R;
 import net.sereko.incense.model.Task;
 import net.sereko.incense.presenter.IPresenter;
-import net.sereko.incense.service.TaskService;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IView;
+import net.sereko.incense.view.View;
 
 import java.util.List;
 
@@ -21,14 +19,14 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 2/20/17.
  */
 
-public class TaskPresenter implements IPresenter<List<Task>, Task>, View.OnClickListener {
+public class TaskPresenter implements IPresenter<List<Task>, Task>, android.view.View.OnClickListener {
     private final String TAG = TaskPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private TaskService taskService;
     private IScheduler scheduler;
-    private IView<List<Task>,Task> taskView;
+    private View<List<Task>,Task> taskView;
 
-    TaskPresenter(TaskService service, IScheduler scheduler, IView<List<Task>, Task> view){
+    TaskPresenter(TaskService service, IScheduler scheduler, View<List<Task>, Task> view){
         super();
         this.taskService = service;
         this.taskView = view;
@@ -83,7 +81,7 @@ public class TaskPresenter implements IPresenter<List<Task>, Task>, View.OnClick
     }
 
     @Override
-    public void setView(IView<List<Task>, Task> view) {
+    public void setView(View<List<Task>, Task> view) {
         this.taskView = view;
         Log.d(TAG, "}setView()");
     }
@@ -97,7 +95,7 @@ public class TaskPresenter implements IPresenter<List<Task>, Task>, View.OnClick
 
 
     @Override
-    public void onClick(View view) {
+    public void onClick(android.view.View view) {
         int id = view.getId();
 
         switch (id){

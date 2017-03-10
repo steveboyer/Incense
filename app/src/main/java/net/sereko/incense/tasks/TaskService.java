@@ -1,4 +1,4 @@
-package net.sereko.incense.service;
+package net.sereko.incense.tasks;
 
 import android.util.Log;
 

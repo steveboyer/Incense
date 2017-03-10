@@ -1,4 +1,4 @@
-package net.sereko.incense.sensors;
+package net.sereko.incense.stopwatch;
 
 import android.content.Context;
 import android.hardware.SensorManager;
@@ -20,11 +20,11 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 1/25/17.
  */
 
-public class SensorPresenter implements android.view.View.OnClickListener, IPresenter<List<SKSensor>, SKSensor> {
+public class StopwatchPresenter implements android.view.View.OnClickListener, IPresenter<List<SKSensor>, SKSensor> {
 
-    private final String TAG = SensorPresenter.class.getSimpleName();
+    private final String TAG = StopwatchPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
-    private SensorService sensorService;
+    private StopwatchService stopwatchService;
     //private Sensor sensor;
     private SKSensor skSensor;
     private SensorManager sensorManager;
@@ -36,9 +36,9 @@ public class SensorPresenter implements android.view.View.OnClickListener, IPres
 
     //private StopwatchActivity activity;
 
-    public SensorPresenter(SensorService service, IScheduler scheduler, View<List<SKSensor>, SKSensor> view){
+    public StopwatchPresenter(StopwatchService service, IScheduler scheduler, View<List<SKSensor>, SKSensor> view){
         super();
-        this.sensorService = service;
+        this.stopwatchService = service;
         this.scheduler = scheduler;
         this.sensorView = view;
         //this.activity = activity;
@@ -120,7 +120,7 @@ public class SensorPresenter implements android.view.View.OnClickListener, IPres
      * @return An observer that waits on StopwatchService sensors
      */
     private Observable<List<SKSensor>> getObservable(){
-        return sensorService.getSKSensors()
+        return stopwatchService.getSKSensors()
                 .subscribeOn(scheduler.backgroundThread())
                 .observeOn(scheduler.mainThread());
     }

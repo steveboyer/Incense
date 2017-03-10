@@ -1,6 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/sensor_outer">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/sensor_info">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sensor_name"
+            android:text="Sensor Name"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/sensor_vendor"
+            android:text="Vendor"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/sensor_values">
+
+        <TextView
+            android:id="@+id/x_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:id="@+id/x_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/x_label"
+            android:text="X Value"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:id="@+id/y_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/x_label"
+            android:text="Y"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:id="@+id/y_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/x_label"
+            android:layout_below="@+id/x_label"
+            android:text="Y Value"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:id="@+id/z_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/y_label"
+            android:text="Z"
+            android:layout_marginLeft="20dp" />
+
+
+        <TextView
+            android:id="@+id/z_value"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/z_label"
+            android:layout_below="@+id/y_label"
+            android:text="Z Value"
+            android:layout_marginLeft="20dp" />
+    </RelativeLayout>
 
 </LinearLayout>

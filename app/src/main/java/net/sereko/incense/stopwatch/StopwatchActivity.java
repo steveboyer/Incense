@@ -1,18 +1,24 @@
-package net.sereko.incense.tasks;
+package net.sereko.incense.stopwatch;
 
 import android.app.Activity;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import net.sereko.incense.R;
-import net.sereko.incense.model.Task;
+import net.sereko.incense.model.SKSensor;
+import net.sereko.incense.sensors.SensorAdapter;
+import net.sereko.incense.sensors.SensorPresenter;
+import net.sereko.incense.sensors.SensorService;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.View;
@@ -26,14 +32,20 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 
-public class TaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View<List<Task>, Task> {
-    private static final String TAG = TaskActivity.class.getSimpleName();
+/**
+ * Created by steve on 2/15/17.
+ */
 
-    @Bind(R.id.listview)
-    ListView listview;
+public class StopwatchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View<List<SKSensor>, SKSensor> {
+
+    private final String TAG = StopwatchActivity.class.getSimpleName();
 
     @Bind(R.id.loading)
     ProgressBar loadingView;
+
+    @Bind(R.id.listview)
+    ListView listView;
+
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -41,41 +53,43 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
     @Bind(R.id.fab)
     FloatingActionButton floatingActionButton;
 
-    @Inject TaskService service;
-    @Inject IScheduler scheduler;
+    @Inject
+    SensorService service;
 
-    private TaskPresenter presenter;
-    private TaskAdapter adapter;
+    @Inject
+    IScheduler scheduler;
+
+    private SensorPresenter presenter;
+    public SensorAdapter adapter;
+
+    // @TODO
+    // Loading, floating button
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.tasks_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        ArrayList<SKSensor> sensors = new ArrayList<>();
 
-        adapter = new TaskAdapter(this, new ArrayList<Task>());
-        listview.setAdapter(adapter);
-
+        adapter = new SensorAdapter(this, sensors);
+        listView.setAdapter(adapter);
         scheduler = new AppScheduler();
-        service = new TaskService();
+        service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new TaskPresenter(service, scheduler, this);
-        //presenter.setView(this);
-
+        presenter = new SensorPresenter(service, scheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
-
-
-        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        //getWindow().setEnterTransition(new Explode());
-
+        //presenter.setView(this);
         presenter.start();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -103,9 +117,10 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, android.view.View view, int i, long l) {
@@ -118,52 +133,45 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        presenter.finish();
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-
-    @Override
     public void setLoading(boolean isLoading) {
         loadingView.setVisibility(isLoading ? android.view.View.VISIBLE : android.view.View.GONE);
     }
 
     @Override
-    public void setModel(List<Task> tasks) {
-        //adapter.clear();
-        adapter.addAll(tasks);
-    }
-
-    public void addItem(Task task){
-        adapter.addAll(task);
+    public void setModel(List<SKSensor> object) {
+        adapter.clear();
+        adapter.addAll(object);
     }
 
     @Override
-    public Task getItem(int position){
+    public SKSensor getItem(int position ){
         return adapter.getItem(position);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return adapter.getCount();
     }
 
     @Override
-    public void insert(Task task, int i) {
+    public void addItem(SKSensor object) {
+        adapter.addAll(object);
+    }
 
+    @Override
+    public void insert(SKSensor sensor, int i){
+        adapter.insert(sensor, i);
     }
 
     @Override
     public void error(Throwable t) {
 
     }
+
+    public SensorAdapter getAdapter(){
+        return adapter;
+    }
+
 
     public Activity getActivity(){
         return this;

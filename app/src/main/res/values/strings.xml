@@ -9,4 +9,5 @@
     <string name="save_draft">Save Draft</string>
     <string name="new_task">Create New Task</string>
     <string name="continue_">Continue...</string>
+    <string name="stopwatch1_name">Stopwatch 1</string>
 </resources>
