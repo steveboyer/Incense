@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.TimePicker;
 
 import net.sereko.incense.R;
 import net.sereko.incense.model.SKSensor;
@@ -20,8 +17,8 @@ import net.sereko.incense.sensors.SensorAdapter;
 import net.sereko.incense.sensors.SensorPresenter;
 import net.sereko.incense.sensors.SensorService;
 import net.sereko.incense.util.AppScheduler;
-import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.View;
+import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.view.IListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,28 +33,22 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class StopwatchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View<List<SKSensor>, SKSensor> {
+public class StopwatchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IListView<SKSensor> {
 
     private final String TAG = StopwatchActivity.class.getSimpleName();
 
-    @Bind(R.id.loading)
-    ProgressBar loadingView;
+    @Bind(R.id.watch1)
+    TimePicker watch;
+//    Toolbar toolbar;
 
-    @Bind(R.id.listview)
-    ListView listView;
-
-
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-
-    @Bind(R.id.fab)
-    FloatingActionButton floatingActionButton;
+//    @Bind(R.id.fab)
+//    FloatingActionButton floatingActionButton;
 
     @Inject
     SensorService service;
 
     @Inject
-    IScheduler scheduler;
+    SScheduler SScheduler;
 
     private SensorPresenter presenter;
     public SensorAdapter adapter;
@@ -69,19 +60,21 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.tasks_main);
+        setContentView(R.layout.stopwatch_view);
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ArrayList<SKSensor> sensors = new ArrayList<>();
 
         adapter = new SensorAdapter(this, sensors);
-        listView.setAdapter(adapter);
-        scheduler = new AppScheduler();
+        //listView.setAdapter(adapter);
+        SScheduler = new AppScheduler();
         service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new SensorPresenter(service, scheduler, this);
-        floatingActionButton.setOnClickListener(presenter);
+        presenter = new SensorPresenter(service, SScheduler, this);
+        //floatingActionButton.setOnClickListener(presenter);
+
+        watch.setIs24HourView(true);
 
         //presenter.setView(this);
         presenter.start();
@@ -134,7 +127,12 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
 
     @Override
     public void setLoading(boolean isLoading) {
-        loadingView.setVisibility(isLoading ? android.view.View.VISIBLE : android.view.View.GONE);
+        //loadingView.setVisibility(isLoading ? android.view.IView.VISIBLE : android.view.IView.GONE);
+    }
+
+    @Override
+    public void setModel(SKSensor item) {
+
     }
 
     @Override

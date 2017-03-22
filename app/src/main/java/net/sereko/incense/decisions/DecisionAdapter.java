@@ -1,4 +1,4 @@
-package net.sereko.incense.sensors;
+package net.sereko.incense.decisions;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,9 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import net.sereko.incense.R;
-import net.sereko.incense.model.SKSensor;
+import net.sereko.incense.model.Decision;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  * Created by steve on 1/25/17.
  */
 
-public class SensorAdapter extends ArrayAdapter<SKSensor> {
+public class DecisionAdapter extends ArrayAdapter<Decision> {
 
     //@Bind(R.layout.sensor_view)
 //    LinearLayout sensorView;
@@ -34,8 +35,8 @@ public class SensorAdapter extends ArrayAdapter<SKSensor> {
 ////    @Bind(R.id.z_value)
 //    TextView zValue;
 
-    public SensorAdapter(Context context, ArrayList<SKSensor> sensors) {
-        super(context, 0, sensors);
+    public DecisionAdapter(Context context, ArrayList<Decision> decisions) {
+        super(context, 0, decisions);
     }
 
     /**
@@ -47,8 +48,8 @@ public class SensorAdapter extends ArrayAdapter<SKSensor> {
      */
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent){
-        SKSensor sensor = getItem(position);
-        if(sensor == null ) return null;
+        Decision d = getItem(position);
+        if(d == null ) return null;
 
         LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if(convertView == null){
@@ -57,6 +58,16 @@ public class SensorAdapter extends ArrayAdapter<SKSensor> {
 
         //Log.d("Adapter", "name " + sensor.getName());
 
+        TextView xValue = (TextView) convertView.findViewById(R.id.x_value);
+        TextView yValue = (TextView) convertView.findViewById(R.id.y_value);
+        TextView zValue = (TextView) convertView.findViewById(R.id.z_value);
+        TextView sensorName = (TextView) convertView.findViewById(R.id.sensor_name);
+
+//        sensorName.setText(sensor.getName());
+//
+//        xValue.setText(Float.toString(sensor.getX_val()));
+//        yValue.setText(Float.toString(sensor.getY_val()));
+//        zValue.setText(Float.toString(sensor.getZ_val()));
 
         return convertView;
     }

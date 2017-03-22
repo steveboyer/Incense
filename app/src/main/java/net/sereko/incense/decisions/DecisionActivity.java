@@ -1,7 +1,6 @@
-package net.sereko.incense.sensors;
+package net.sereko.incense.decisions;
 
 import android.app.Activity;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,18 +9,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import net.sereko.incense.R;
-import net.sereko.incense.model.SKSensor;
+import net.sereko.incense.model.Decision;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.SScheduler;
-import net.sereko.incense.view.IListView;
+import net.sereko.incense.view.IView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,16 +29,15 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class SensorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IListView<SKSensor> {
+public class DecisionActivity extends AppCompatActivity implements IView<Decision> {
 
-    private final String TAG = SensorActivity.class.getSimpleName();
+    private final String TAG = DecisionActivity.class.getSimpleName();
 
     @Bind(R.id.loading)
     ProgressBar loadingView;
 
-    @Bind(R.id.listview)
-    ListView listView;
-
+//    @Bind(R.id.listview)
+//    ListIView listView;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -51,13 +46,12 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     FloatingActionButton floatingActionButton;
 
     @Inject
-    SensorService service;
+    DecisionService service;
 
     @Inject
     SScheduler SScheduler;
 
-    private SensorPresenter presenter;
-    public SensorAdapter adapter;
+    private DecisionPresenter presenter;
 
     // @TODO
     // Loading, floating button
@@ -66,18 +60,17 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.tasks_main);
+        setContentView(R.layout.decisions_view);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        ArrayList<SKSensor> sensors = new ArrayList<>();
+        ArrayList<Decision> decisions = new ArrayList<>();
 
-        adapter = new SensorAdapter(this, sensors);
-        listView.setAdapter(adapter);
+//        listView.setAdapter(adapter);
         SScheduler = new AppScheduler();
-        service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
+        service = new DecisionService(this);
 
-        presenter = new SensorPresenter(service, SScheduler, this);
+        presenter = new DecisionPresenter(service, SScheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);
@@ -117,62 +110,22 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
         return super.onOptionsItemSelected(item);
     }
 
-
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, android.view.View view, int i, long l) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
     @Override
     public void setLoading(boolean isLoading) {
-        loadingView.setVisibility(isLoading ? android.view.View.VISIBLE : android.view.View.GONE);
+//        loadingView.setVisibility(isLoading ? android.view.IView.VISIBLE : android.view.IView.GONE);
     }
 
     @Override
-    public void setModel(SKSensor item) {
+    public void setModel(Decision object) {
 
     }
 
-    @Override
-    public void setModel(List<SKSensor> object) {
-        adapter.clear();
-        adapter.addAll(object);
-    }
-
-    @Override
-    public SKSensor getItem(int position ){
-        return adapter.getItem(position);
-    }
-
-    @Override
-    public int getItemCount() {
-        return adapter.getCount();
-    }
-
-    @Override
-    public void addItem(SKSensor object) {
-        adapter.addAll(object);
-    }
-
-    @Override
-    public void insert(SKSensor sensor, int i){
-        adapter.insert(sensor, i);
-    }
 
     @Override
     public void error(Throwable t) {
 
     }
 
-    public SensorAdapter getAdapter(){
-        return adapter;
-    }
 
 
     public Activity getActivity(){

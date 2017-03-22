@@ -5,8 +5,9 @@ import android.util.Log;
 import net.sereko.incense.R;
 import net.sereko.incense.model.Task;
 import net.sereko.incense.presenter.IPresenter;
-import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.View;
+import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.view.IListView;
+import net.sereko.incense.view.IView;
 
 import java.util.List;
 
@@ -19,22 +20,22 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 2/20/17.
  */
 
-public class TaskPresenter implements IPresenter<List<Task>, Task>, android.view.View.OnClickListener {
+public class TaskPresenter implements IPresenter<Task>, android.view.View.OnClickListener {
     private final String TAG = TaskPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private TaskService taskService;
-    private IScheduler scheduler;
-    private View<List<Task>,Task> taskView;
+    private SScheduler SScheduler;
+    private IListView<Task> view;
 
-    TaskPresenter(TaskService service, IScheduler scheduler, View<List<Task>, Task> view){
+    TaskPresenter(TaskService service, SScheduler SScheduler, IListView<Task> view){
         super();
         this.taskService = service;
-        this.taskView = view;
+        this.view = view;
 
-        //By using this scheduler we can run the same presenter in various ways
+        //By using this SScheduler we can run the same presenter in various ways
         //When run in Android land we run the work asynchronously and push results to the UI thread
         //When run in the tests we run the work and publish results on the same thread
-        this.scheduler = scheduler;
+        this.SScheduler = SScheduler;
     }
 
     private Subscriber<List<Task>> getSubscriber() {
@@ -42,26 +43,26 @@ public class TaskPresenter implements IPresenter<List<Task>, Task>, android.view
             @Override
             public void onStart(){
                 super.onStart();
-                taskView.setLoading(true);
+                view.setLoading(true);
                 Log.d(TAG, "}onStart");
             }
 
             @Override
             public void onCompleted() {
-                taskView.setLoading(false);
+                view.setLoading(false);
                 Log.d(TAG, "}onCompleted");
             }
 
             @Override
             public void onError(Throwable e) {
-                taskView.setLoading(false);
-                taskView.error(e);
+                view.setLoading(false);
+                view.error(e);
                 Log.d(TAG, "}onError");
             }
 
             @Override
             public void onNext(List<Task> tasks) {
-                taskView.setModel(tasks);
+                view.setModel(tasks);
                 Log.d(TAG, "}onNext");
             }
         };
@@ -76,21 +77,29 @@ public class TaskPresenter implements IPresenter<List<Task>, Task>, android.view
     @Override
     public void finish() {
         subscription.unsubscribe();
-        this.taskView = null;
+        this.view = null;
         Log.d(TAG, "}finish()");
     }
 
     @Override
-    public void setView(View<List<Task>, Task> view) {
-        this.taskView = view;
-        Log.d(TAG, "}setView()");
+    public void setView(IView<Task> iView) {
+
+    }
+
+//    @Override
+//    public void setView(IListView<Task> iListView) {
+//
+//    }
+
+    @Override
+    public void setView(IListView<Task> IView) {
+        this.view = IView;
     }
 
     private Observable<List<Task>> getObservable(){
-        Log.d(TAG, "{getObservable()");
         return taskService.getTasks()
-                .subscribeOn(scheduler.backgroundThread())
-                .observeOn(scheduler.mainThread());
+                .subscribeOn(SScheduler.backgroundThread())
+                .observeOn(SScheduler.mainThread());
     }
 
 
@@ -102,7 +111,7 @@ public class TaskPresenter implements IPresenter<List<Task>, Task>, android.view
             case R.id.fab:
                 Task t = new Task();
                 t.setName("HEllo");
-                taskView.addItem(t);
+                this.view.addItem(t);
                 break;
             default:
                 throw new RuntimeException();

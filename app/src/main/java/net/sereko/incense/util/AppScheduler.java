@@ -1,21 +1,20 @@
 package net.sereko.incense.util;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by steve on 2/21/17.
  */
 
-public class AppScheduler implements IScheduler {
+public class AppScheduler implements SScheduler {
     @Override
-    public Scheduler mainThread(){
+    public rx.Scheduler mainThread(){
         return AndroidSchedulers.mainThread();
     }
 
     @Override
-    public Scheduler backgroundThread(){
+    public rx.Scheduler backgroundThread(){
         return Schedulers.io();
     }
 }

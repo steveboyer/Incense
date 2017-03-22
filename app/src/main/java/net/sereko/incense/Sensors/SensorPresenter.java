@@ -6,8 +6,9 @@ import android.util.Log;
 
 import net.sereko.incense.model.SKSensor;
 import net.sereko.incense.presenter.IPresenter;
-import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.View;
+import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.view.IListView;
+import net.sereko.incense.view.IView;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 1/25/17.
  */
 
-public class SensorPresenter implements android.view.View.OnClickListener, IPresenter<List<SKSensor>, SKSensor> {
+public class SensorPresenter implements android.view.View.OnClickListener, IPresenter<SKSensor> {
 
     private final String TAG = SensorPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
@@ -28,19 +29,19 @@ public class SensorPresenter implements android.view.View.OnClickListener, IPres
     //private Sensor sensor;
     private SKSensor skSensor;
     private SensorManager sensorManager;
-    private IScheduler scheduler;
-    private View<List<SKSensor>, SKSensor> sensorView;
-//    private SensorAdapter adapter;
+    private SScheduler SScheduler;
+    private IListView<SKSensor> view;
+//    private DecisionAdapter adapter;
 //    public ArrayList<SKSensor> skSensors;
 
 
     //private StopwatchActivity activity;
 
-    public SensorPresenter(SensorService service, IScheduler scheduler, View<List<SKSensor>, SKSensor> view){
+    public SensorPresenter(SensorService service, SScheduler SScheduler, IListView<SKSensor> view){
         super();
         this.sensorService = service;
-        this.scheduler = scheduler;
-        this.sensorView = view;
+        this.SScheduler = SScheduler;
+        this.view = view;
         //this.activity = activity;
 
         this.sensorManager = (SensorManager) view.getActivity().getSystemService(Context.SENSOR_SERVICE);
@@ -50,7 +51,7 @@ public class SensorPresenter implements android.view.View.OnClickListener, IPres
         //Log.w(TAG, sensor.getName());
 
         //skSensor = new SKSensor("Accelerometer", sensor);
-        //view.addItem(skSensor);
+        //IView.addItem(skSensor);
 //
 //        Thread t = new Thread(new Runnable() {
 //            public void run() {
@@ -67,24 +68,23 @@ public class SensorPresenter implements android.view.View.OnClickListener, IPres
             @Override
             public void onStart(){
                 super.onStart();
-                sensorView.setLoading(true);
+                view.setLoading(true);
             }
 
             @Override
             public void onCompleted() {
-                sensorView.setLoading(false);
+                view.setLoading(false);
             }
 
             @Override
             public void onError(Throwable e) {
-                sensorView.setLoading(false);
-                sensorView.error(e);
+                view.setLoading(false);
+                view.error(e);
             }
 
             @Override
             public void onNext(List<SKSensor> skSensors) {
-                sensorView.setModel(skSensors);
-
+                view.setModel(skSensors);
             }
         };
     }
@@ -105,13 +105,18 @@ public class SensorPresenter implements android.view.View.OnClickListener, IPres
     @Override
     public void finish() {
         subscription.unsubscribe();
-        this.sensorView = null;
+        this.view = null;
         //skSensor.finish();
     }
 
     @Override
-    public void setView(View<List<SKSensor>, SKSensor> view) {
-        this.sensorView = view;
+    public void setView(IView<SKSensor> iView) {
+
+    }
+
+    @Override
+    public void setView(IListView<SKSensor> view) {
+        this.view = view;
     }
 
 
@@ -121,8 +126,8 @@ public class SensorPresenter implements android.view.View.OnClickListener, IPres
      */
     private Observable<List<SKSensor>> getObservable(){
         return sensorService.getSKSensors()
-                .subscribeOn(scheduler.backgroundThread())
-                .observeOn(scheduler.mainThread());
+                .subscribeOn(SScheduler.backgroundThread())
+                .observeOn(SScheduler.mainThread());
     }
 
 

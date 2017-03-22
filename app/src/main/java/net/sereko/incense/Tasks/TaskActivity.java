@@ -14,8 +14,8 @@ import android.widget.ProgressBar;
 import net.sereko.incense.R;
 import net.sereko.incense.model.Task;
 import net.sereko.incense.util.AppScheduler;
-import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.View;
+import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.view.IListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 
-public class TaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View<List<Task>, Task> {
+public class TaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IListView<Task> {
     private static final String TAG = TaskActivity.class.getSimpleName();
 
     @Bind(R.id.listview)
@@ -42,7 +42,8 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
     FloatingActionButton floatingActionButton;
 
     @Inject TaskService service;
-    @Inject IScheduler scheduler;
+    @Inject
+    SScheduler SScheduler;
 
     private TaskPresenter presenter;
     private TaskAdapter adapter;
@@ -57,10 +58,10 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter = new TaskAdapter(this, new ArrayList<Task>());
         listview.setAdapter(adapter);
 
-        scheduler = new AppScheduler();
+        SScheduler = new AppScheduler();
         service = new TaskService();
 
-        presenter = new TaskPresenter(service, scheduler, this);
+        presenter = new TaskPresenter(service, SScheduler, this);
         //presenter.setView(this);
 
         floatingActionButton.setOnClickListener(presenter);
@@ -133,6 +134,11 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void setLoading(boolean isLoading) {
         loadingView.setVisibility(isLoading ? android.view.View.VISIBLE : android.view.View.GONE);
+    }
+
+    @Override
+    public void setModel(Task item) {
+
     }
 
     @Override
