@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import net.sereko.incense.R;
 import net.sereko.incense.model.Decision;
 import net.sereko.incense.util.AppScheduler;
-import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IView;
 
 import java.util.ArrayList;
@@ -49,9 +49,9 @@ public class DecisionActivity extends AppCompatActivity implements IView<Decisio
     DecisionService service;
 
     @Inject
-    SScheduler SScheduler;
+    IScheduler IScheduler;
 
-    private DecisionPresenter presenter;
+    private DecisionListPresenter presenter;
 
     // @TODO
     // Loading, floating button
@@ -60,17 +60,17 @@ public class DecisionActivity extends AppCompatActivity implements IView<Decisio
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.decisions_view);
+        setContentView(R.layout.driver_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ArrayList<Decision> decisions = new ArrayList<>();
 
 //        listView.setAdapter(adapter);
-        SScheduler = new AppScheduler();
+        IScheduler = new AppScheduler();
         service = new DecisionService(this);
 
-        presenter = new DecisionPresenter(service, SScheduler, this);
+        presenter = new DecisionListPresenter(service, IScheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);

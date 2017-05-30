@@ -1,4 +1,4 @@
-package net.sereko.incense.decisions;
+package net.sereko.incense.drivergrades;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import net.sereko.incense.R;
-import net.sereko.incense.model.Decision;
+import net.sereko.incense.model.SKSensor;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Created by steve on 1/25/17.
  */
 
-public class DecisionAdapter extends ArrayAdapter<Decision> {
+public class DriverAdapter extends ArrayAdapter<SKSensor> {
 
     //@Bind(R.layout.sensor_view)
 //    LinearLayout sensorView;
@@ -34,8 +34,8 @@ public class DecisionAdapter extends ArrayAdapter<Decision> {
 ////    @Bind(R.id.z_value)
 //    TextView zValue;
 
-    public DecisionAdapter(Context context, ArrayList<Decision> decisions) {
-        super(context, 0, decisions);
+    public DriverAdapter(Context context, ArrayList<SKSensor> sensors) {
+        super(context, 0, sensors);
     }
 
     /**
@@ -47,13 +47,16 @@ public class DecisionAdapter extends ArrayAdapter<Decision> {
      */
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent){
-        Decision d = getItem(position);
-        if(d == null ) return null;
+        SKSensor sensor = getItem(position);
+        if(sensor == null ) return null;
 
         LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if(convertView == null){
             convertView = inflater.inflate(R.layout.sensor_view, null);
         }
+
+        //Log.d("Adapter", "name " + sensor.getName());
+
 
         return convertView;
     }

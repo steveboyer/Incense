@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 import net.sereko.incense.R;
 import net.sereko.incense.model.SKSensor;
 import net.sereko.incense.util.AppScheduler;
-import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IListView;
 
 import java.util.ArrayList;
@@ -54,9 +54,9 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     SensorService service;
 
     @Inject
-    SScheduler SScheduler;
+    IScheduler scheduler;
 
-    private SensorPresenter presenter;
+    private SensorListPresenter presenter;
     public SensorAdapter adapter;
 
     // @TODO
@@ -74,10 +74,10 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
 
         adapter = new SensorAdapter(this, sensors);
         listView.setAdapter(adapter);
-        SScheduler = new AppScheduler();
+        scheduler = new AppScheduler();
         service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new SensorPresenter(service, SScheduler, this);
+        presenter = new SensorListPresenter(service, scheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);

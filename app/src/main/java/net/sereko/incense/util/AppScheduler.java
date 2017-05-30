@@ -7,7 +7,7 @@ import rx.schedulers.Schedulers;
  * Created by steve on 2/21/17.
  */
 
-public class AppScheduler implements SScheduler {
+public class AppScheduler implements IScheduler {
     @Override
     public rx.Scheduler mainThread(){
         return AndroidSchedulers.mainThread();

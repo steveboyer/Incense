@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import net.sereko.incense.R;
 import net.sereko.incense.model.Task;
 import net.sereko.incense.util.AppScheduler;
-import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IListView;
 
 import java.util.ArrayList;
@@ -41,11 +41,13 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
     @Bind(R.id.fab)
     FloatingActionButton floatingActionButton;
 
-    @Inject TaskService service;
     @Inject
-    SScheduler SScheduler;
+    TaskService service;
 
-    private TaskPresenter presenter;
+    @Inject
+    IScheduler IScheduler;
+
+    private TaskListPresenter presenter;
     private TaskAdapter adapter;
 
     @Override
@@ -58,18 +60,16 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter = new TaskAdapter(this, new ArrayList<Task>());
         listview.setAdapter(adapter);
 
-        SScheduler = new AppScheduler();
+        IScheduler = new AppScheduler();
         service = new TaskService();
 
-        presenter = new TaskPresenter(service, SScheduler, this);
+        presenter = new TaskListPresenter(service, IScheduler, this);
         //presenter.setView(this);
 
         floatingActionButton.setOnClickListener(presenter);
 
-
-
-        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        //getWindow().setEnterTransition(new Explode());
+//        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+//        getWindow().setEnterTransition(new Explode());
 
         presenter.start();
     }

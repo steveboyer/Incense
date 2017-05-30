@@ -3,8 +3,8 @@ package net.sereko.incense.decisions;
 import android.util.Log;
 
 import net.sereko.incense.model.Decision;
-import net.sereko.incense.presenter.IPresenter;
-import net.sereko.incense.util.SScheduler;
+import net.sereko.incense.presenter.IListPresenter;
+import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IListView;
 import net.sereko.incense.view.IView;
 
@@ -16,12 +16,12 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 1/25/17.
  */
 
-public class DecisionPresenter implements android.view.View.OnClickListener, IPresenter<Decision> {
+public class DecisionListPresenter implements android.view.View.OnClickListener, IListPresenter<Decision> {
 
-    private final String TAG = DecisionPresenter.class.getSimpleName();
+    private final String TAG = DecisionListPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private DecisionService decisionService;
-    private SScheduler SScheduler;
+    private IScheduler IScheduler;
     private IView<Decision> decisionView;
 //    private DecisionAdapter adapter;
 //    public ArrayList<SKSensor> skSensors;
@@ -29,10 +29,10 @@ public class DecisionPresenter implements android.view.View.OnClickListener, IPr
 
     //private StopwatchActivity activity;
 
-    public DecisionPresenter(DecisionService service, SScheduler SScheduler, IView<Decision> IView){
+    public DecisionListPresenter(DecisionService service, IScheduler IScheduler, IView<Decision> IView){
         super();
         this.decisionService = service;
-        this.SScheduler = SScheduler;
+        this.IScheduler = IScheduler;
         this.decisionView = IView;
         decisionView.setLoading(true);
 
@@ -103,8 +103,8 @@ public class DecisionPresenter implements android.view.View.OnClickListener, IPr
      */
 //    private Observable<Decision> getObservable(){
 //        return decisionService.getDecisions()
-//                .subscribeOn(SScheduler.backgroundThread())
-//                .observeOn(SScheduler.mainThread());
+//                .subscribeOn(IScheduler.backgroundThread())
+//                .observeOn(IScheduler.mainThread());
 //    }
 
 
