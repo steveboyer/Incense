@@ -6,9 +6,9 @@ import android.app.Activity;
  * Created by steve on 2/21/17.
  */
 
-public interface IView<V> {
+public interface IView {
     void setLoading(boolean isLoading);
-    void setModel(V item);
+    void setModel();
     void error(Throwable t);
     Activity getActivity();
 }

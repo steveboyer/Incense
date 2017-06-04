@@ -1,24 +1,27 @@
 package net.sereko.incense.drivergrades;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import net.sereko.incense.R;
-import net.sereko.incense.model.SKSensor;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
 
-import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -31,10 +34,10 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class DriverActivity extends AppCompatActivity implements IBaseGPSListener {
+public class DriverActivity extends AbstractPermissionsActivity implements IBaseGPSListener, OnRequestPermissionsResultCallback {
 
     private final String TAG = DriverActivity.class.getSimpleName();
-
+    private final int PERMISSION_GPS = 0;
 //    @Bind(R.id.loading)
 //    ProgressBar loadingView;
 //
@@ -61,44 +64,93 @@ public class DriverActivity extends AppCompatActivity implements IBaseGPSListene
     // Loading, floating button
 
     @Override
+    protected String[] getDesiredPermissions() {
+        return new String[0];
+    }
+
+    @Override
+    protected void onPermissionDenied() {
+
+    }
+
+    @Override
+    protected void onReady(Bundle state) {
+
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.w(TAG, TAG);
         setContentView(R.layout.driver_main);
         ButterKnife.bind(this);
         // setSupportActionBar(toolbar);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        ArrayList<SKSensor> sensors = new ArrayList<>();
 
-        //adapter = new DriverAdapter(this, sensors);
-        //listView.setAdapter(adapter);
         scheduler = new AppScheduler();
         service = new DriverService((SensorManager) this.getSystemService(SENSOR_SERVICE));
 
         presenter = new DriverPresenter(service, scheduler);
-        //floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);
         presenter.start();
 
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        } catch (SecurityException ex){ // Permission not given
-
+        if(savedInstanceState != null){
+            Boolean isInPermission = savedInstanceState.getBoolean(STATE_IN_PERMISSION, false);
         }
+
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Criteria for picking provider (e.g. GPS)
+        Criteria c = new Criteria();
+        c.setAccuracy(Criteria.ACCURACY_FINE);
+        c.setAltitudeRequired(true);
+
+        String lmName = locationManager.getBestProvider(c, false);// return disabled ones too
+
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        Log.w(TAG, "Checking permissions...");// @TODO Add more permissions code like implementing methods from AbstractPerms
+        // Check/request the permisson
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            test(locationManager, lmName);
+        } else {
+            Log.w(TAG, "Deciding...");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
+                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)){
+                ActivityCompat.requestPermissions(this, perms, PERMISSION_GPS);
+                // Async request!!
+                Log.w(TAG, "Requesting permission...");
+
+
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            } else { // nope
+                Log.w(TAG, "Also requesting here.");
+                ActivityCompat.requestPermissions(this, perms, PERMISSION_GPS);
+                test(locationManager, lmName);
+            }
+        }
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    public void test(LocationManager locationManager, String lmName){
+        // Test
+        Log.w(TAG, "Getting altitute");
+        Location l = locationManager.getLastKnownLocation(lmName);
+        Log.w(TAG, String.valueOf(l.getAltitude() * 3.2808));
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         this.updateSpeed(null);
-
-//        CheckBox chkUseMetricUntis = (CheckBox) this.findViewById(R.id.chkMetricUnits);
-//        chkUseMetricUntis.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                // TODO Auto-generated method stub
-//                DriverActivity.this.updateSpeed(null);
-//            }
-        //});
     }
 
     public void finish()

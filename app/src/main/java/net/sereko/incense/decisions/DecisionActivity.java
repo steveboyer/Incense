@@ -110,6 +110,8 @@ public class DecisionActivity extends AppCompatActivity implements IView<Decisio
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @Override
     public void setLoading(boolean isLoading) {
 //        loadingView.setVisibility(isLoading ? android.view.IView.VISIBLE : android.view.IView.GONE);
