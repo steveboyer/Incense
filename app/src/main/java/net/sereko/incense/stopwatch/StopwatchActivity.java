@@ -14,7 +14,7 @@ import android.widget.TimePicker;
 import net.sereko.incense.R;
 import net.sereko.incense.model.SKSensor;
 import net.sereko.incense.sensors.SensorAdapter;
-import net.sereko.incense.sensors.SensorListAdapterPresenter;
+import net.sereko.incense.sensors.SensorPresenter;
 import net.sereko.incense.sensors.SensorService;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
@@ -50,7 +50,7 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
     @Inject
     IScheduler IScheduler;
 
-    private SensorListAdapterPresenter presenter;
+    private SensorPresenter presenter;
     public SensorAdapter adapter;
 
     // @TODO
@@ -71,7 +71,7 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
         IScheduler = new AppScheduler();
         service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new SensorListAdapterPresenter(service, IScheduler, this);
+        presenter = new SensorPresenter(service, IScheduler, this);
         //floatingActionButton.setOnClickListener(presenter);
 
         watch.setIs24HourView(true);

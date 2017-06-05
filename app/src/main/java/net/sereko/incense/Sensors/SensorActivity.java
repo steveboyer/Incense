@@ -56,7 +56,7 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     @Inject
     IScheduler scheduler;
 
-    private SensorListAdapterPresenter presenter;
+    private SensorPresenter presenter;
     public SensorAdapter adapter;
 
     // @TODO
@@ -77,7 +77,7 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
         scheduler = new AppScheduler();
         service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new SensorListAdapterPresenter(service, scheduler, this);
+        presenter = new SensorPresenter(service, scheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);

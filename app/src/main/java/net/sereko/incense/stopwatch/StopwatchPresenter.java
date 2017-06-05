@@ -19,9 +19,9 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 1/25/17.
  */
 
-public class StopwatchIListAdapterPresenter implements android.view.View.OnClickListener, IAdapterPresenter<SKSensor> {
+public class StopwatchPresenter implements android.view.View.OnClickListener, IAdapterPresenter<SKSensor> {
 
-    private final String TAG = StopwatchIListAdapterPresenter.class.getSimpleName();
+    private final String TAG = StopwatchPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private StopwatchService stopwatchService;
     //private Sensor sensor;
@@ -35,7 +35,7 @@ public class StopwatchIListAdapterPresenter implements android.view.View.OnClick
 
     //private StopwatchActivity activity;
 
-    public StopwatchIListAdapterPresenter(StopwatchService service, IScheduler SScheduler, IAdapterView<SKSensor> IView){
+    public StopwatchPresenter(StopwatchService service, IScheduler SScheduler, IAdapterView<SKSensor> IView){
         super();
         this.stopwatchService = service;
         this.IScheduler = SScheduler;
