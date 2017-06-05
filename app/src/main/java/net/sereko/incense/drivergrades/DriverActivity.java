@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,12 +22,14 @@ import android.widget.TextView;
 import net.sereko.incense.R;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
+import net.sereko.incense.view.IView;
 
 import java.util.Formatter;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 
@@ -34,22 +37,30 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class DriverActivity extends AbstractPermissionsActivity implements IBaseGPSListener, OnRequestPermissionsResultCallback {
+public class DriverActivity extends AbstractPermissionsActivity implements LocationListener, OnRequestPermissionsResultCallback, IView {
 
     private final String TAG = DriverActivity.class.getSimpleName();
     private final int PERMISSION_GPS = 0;
 //    @Bind(R.id.loading)
 //    ProgressBar loadingView;
-//
-//    @Bind(R.id.listview)
-//    ListView listView;
-
 
 //    @Bind(R.id.toolbar)
 //    Toolbar toolbar;
 //
 //    @Bind(R.id.fab)
 //    FloatingActionButton floatingActionButton;
+
+    @Bind(R.id.txtCurrentSpeed)
+    TextView txtCurrentSpeed;
+
+    @Bind(R.id.txtCurrentLatitude)
+    TextView txtCurrentLatitude;
+
+    @Bind(R.id.txtCurrentLongitude)
+    TextView txtCurrentLongitude;
+
+    @Bind(R.id.txtCurrentAltitude)
+    TextView txtCurrentAltitude;
 
     @Inject
     DriverService service;
@@ -90,16 +101,15 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
         scheduler = new AppScheduler();
         service = new DriverService((SensorManager) this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new DriverPresenter(service, scheduler);
+        presenter = new DriverPresenter(service, scheduler, this);
 
         //presenter.setView(this);
         presenter.start();
 
-
-        if(savedInstanceState != null){
-            Boolean isInPermission = savedInstanceState.getBoolean(STATE_IN_PERMISSION, false);
-        }
-
+//
+//        if(savedInstanceState != null){
+//            Boolean isInPermission = savedInstanceState.getBoolean(STATE_IN_PERMISSION, false);
+//        }
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -149,6 +159,10 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
         Log.w(TAG, "Getting altitute");
         Location l = locationManager.getLastKnownLocation(lmName);
         Log.w(TAG, String.valueOf(l.getAltitude() * 3.2808));
+        txtCurrentLatitude.setText(String.valueOf(l.getLatitude()));
+        txtCurrentLongitude.setText(String.valueOf(l.getLongitude()));
+        txtCurrentSpeed.setText(String.valueOf(l.getSpeed()));
+        txtCurrentAltitude.setText(String.valueOf(l.getAltitude() * 3.2808));
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         this.updateSpeed(null);
     }
@@ -160,7 +174,6 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
     }
 
     private void updateSpeed(CLocation location) {
-        // TODO Auto-generated method stub
         float nCurrentSpeed = 0;
 
         if(location != null)
@@ -180,8 +193,8 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
             strUnits = "meters/second";
         }
 
-        TextView txtCurrentSpeed = (TextView) this.findViewById(R.id.txtCurrentSpeed);
-        txtCurrentSpeed.setText(strCurrentSpeed + " " + strUnits);
+//        TextView txtCurrentSpeed = (TextView) this.findViewById(R.id.txtCurrentSpeed);
+//        txtCurrentSpeed.setText(strCurrentSpeed + " " + strUnits);
     }
 
     private boolean useMetricUnits() {
@@ -192,9 +205,8 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
     }
 
     @Override
+    @SuppressWarnings({"MissingPermission"})
     public void onLocationChanged(Location location) {
-        // TODO Auto-generated method stub
-        if(location != null)
         {
             CLocation myLocation = new CLocation(location, this.useMetricUnits());
             this.updateSpeed(myLocation);
@@ -203,14 +215,15 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
 
     @Override
     public void onProviderDisabled(String provider) {
-        // TODO Auto-generated method stub
+        Log.d(TAG, "Disabled");
+        Log.d(TAG, provider);
 
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
-
+        Log.d(TAG, "Enabled");
+        Log.d(TAG, provider);
     }
 
     @Override
@@ -218,13 +231,6 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
         // TODO Auto-generated method stub
 
     }
-
-    @Override
-    public void onGpsStatusChanged(int event) {
-        // TODO Auto-generated method stub
-
-    }
-
 
     @Override
     protected void onDestroy() {
@@ -257,6 +263,16 @@ public class DriverActivity extends AbstractPermissionsActivity implements IBase
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+
+    }
+
+    @Override
+    public void error(Throwable t) {
+
     }
 
     public Activity getActivity(){

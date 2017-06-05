@@ -15,9 +15,10 @@ import net.sereko.incense.R;
 import net.sereko.incense.model.Decision;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -29,7 +30,7 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class DecisionActivity extends AppCompatActivity implements IView<Decision> {
+public class DecisionActivity extends AppCompatActivity implements IAdapterView<Decision> {
 
     private final String TAG = DecisionActivity.class.getSimpleName();
 
@@ -51,7 +52,7 @@ public class DecisionActivity extends AppCompatActivity implements IView<Decisio
     @Inject
     IScheduler IScheduler;
 
-    private DecisionListPresenter presenter;
+    private DecisionListAdapterPresenter presenter;
 
     // @TODO
     // Loading, floating button
@@ -70,7 +71,7 @@ public class DecisionActivity extends AppCompatActivity implements IView<Decisio
         IScheduler = new AppScheduler();
         service = new DecisionService(this);
 
-        presenter = new DecisionListPresenter(service, IScheduler, this);
+        presenter = new DecisionListAdapterPresenter(service, IScheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);
@@ -111,16 +112,36 @@ public class DecisionActivity extends AppCompatActivity implements IView<Decisio
     }
 
 
+    @Override
+    public void addItem(Decision object) {
+
+    }
+
+    @Override
+    public Decision getItem(int i) {
+        return null;
+    }
+
+    @Override
+    public int getItemCount() {
+        return 0;
+    }
+
+    @Override
+    public void insert(Decision decision, int i) {
+
+    }
+
+    @Override
+    public void setModel(List<Decision> objects) {
+
+    }
 
     @Override
     public void setLoading(boolean isLoading) {
 //        loadingView.setVisibility(isLoading ? android.view.IView.VISIBLE : android.view.IView.GONE);
     }
 
-    @Override
-    public void setModel(Decision object) {
-
-    }
 
 
     @Override

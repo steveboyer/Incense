@@ -3,10 +3,9 @@ package net.sereko.incense.decisions;
 import android.util.Log;
 
 import net.sereko.incense.model.Decision;
-import net.sereko.incense.presenter.IListPresenter;
+import net.sereko.incense.presenter.IAdapterPresenter;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IListView;
-import net.sereko.incense.view.IView;
+import net.sereko.incense.view.IAdapterView;
 
 import rx.Subscriber;
 import rx.Subscription;
@@ -16,20 +15,15 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 1/25/17.
  */
 
-public class DecisionListPresenter implements android.view.View.OnClickListener, IListPresenter<Decision> {
+public class DecisionListAdapterPresenter implements android.view.View.OnClickListener, IAdapterPresenter<Decision> {
 
-    private final String TAG = DecisionListPresenter.class.getSimpleName();
+    private final String TAG = DecisionListAdapterPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private DecisionService decisionService;
     private IScheduler IScheduler;
-    private IView<Decision> decisionView;
-//    private DecisionAdapter adapter;
-//    public ArrayList<SKSensor> skSensors;
+    private IAdapterView<Decision> decisionView;
 
-
-    //private StopwatchActivity activity;
-
-    public DecisionListPresenter(DecisionService service, IScheduler IScheduler, IView<Decision> IView){
+    public DecisionListAdapterPresenter(DecisionService service, IScheduler IScheduler, IAdapterView<Decision> IView){
         super();
         this.decisionService = service;
         this.IScheduler = IScheduler;
@@ -61,12 +55,11 @@ public class DecisionListPresenter implements android.view.View.OnClickListener,
 
             @Override
             public void onNext(Decision decision) {
-                decisionView.setModel(decision);
+               // decisionView.setModel(decision);
 
             }
         };
     }
-
 
 
     @Override
@@ -88,13 +81,8 @@ public class DecisionListPresenter implements android.view.View.OnClickListener,
     }
 
     @Override
-    public void setView(IView<Decision> IView) {
+    public void setView(IAdapterView<Decision> IView) {
         this.decisionView = IView;
-    }
-
-    @Override
-    public void setView(IListView<Decision> iListView) {
-
     }
 
     /**

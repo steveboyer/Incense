@@ -1,13 +1,13 @@
-package net.sereko.incense.stopwatch;
+package net.sereko.incense.sensors;
 
 import android.content.Context;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import net.sereko.incense.model.SKSensor;
-import net.sereko.incense.presenter.IListPresenter;
+import net.sereko.incense.presenter.IAdapterPresenter;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IListView;
-import net.sereko.incense.view.IView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.List;
 
@@ -20,31 +20,44 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 1/25/17.
  */
 
-public class StopwatchIListPresenter implements android.view.View.OnClickListener, IListPresenter<SKSensor> {
+public class SensorListAdapterPresenter implements android.view.View.OnClickListener, IAdapterPresenter<SKSensor> {
 
-    private final String TAG = StopwatchIListPresenter.class.getSimpleName();
+    private final String TAG = SensorListAdapterPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
-    private StopwatchService stopwatchService;
+    private SensorService sensorService;
     //private Sensor sensor;
     private SKSensor skSensor;
     private SensorManager sensorManager;
-    private IScheduler IScheduler;
-    private IListView<SKSensor> view;
+    private IScheduler scheduler;
+    private IAdapterView<SKSensor> view;
 //    private DecisionAdapter adapter;
 //    public ArrayList<SKSensor> skSensors;
 
 
     //private StopwatchActivity activity;
 
-    public StopwatchIListPresenter(StopwatchService service, IScheduler SScheduler, IListView<SKSensor> IView){
+    public SensorListAdapterPresenter(SensorService service, IScheduler SScheduler, IAdapterView<SKSensor> view){
         super();
-        this.stopwatchService = service;
-        this.IScheduler = SScheduler;
+        this.sensorService = service;
+        this.scheduler = SScheduler;
         this.view = view;
         //this.activity = activity;
 
-        this.sensorManager = (SensorManager) IView.getActivity().getSystemService(Context.SENSOR_SERVICE);
+        this.sensorManager = (SensorManager) view.getActivity().getSystemService(Context.SENSOR_SERVICE);
 
+        Log.w(TAG, TAG);
+        //this.sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        //Log.w(TAG, sensor.getName());
+
+        //skSensor = new SKSensor("Accelerometer", sensor);
+        //IView.addItem(skSensor);
+//
+//        Thread t = new Thread(new Runnable() {
+//            public void run() {
+//                //skSensor.start();
+//            }
+//        });
+//        t.start();
 
     }
 
@@ -71,7 +84,6 @@ public class StopwatchIListPresenter implements android.view.View.OnClickListene
             @Override
             public void onNext(List<SKSensor> skSensors) {
                 view.setModel(skSensors);
-
             }
         };
     }
@@ -97,23 +109,8 @@ public class StopwatchIListPresenter implements android.view.View.OnClickListene
     }
 
     @Override
-    public void setView(IView<SKSensor> iView) {
-
-    }
-
-//    @Override
-//    public void setView(IView<SKSensor> iView) {
-//
-//    }
-
-//    @Override
-//    public void setView(IListView<SKSensor> iListView) {
-//
-//    }
-
-    @Override
-    public void setView(IListView<SKSensor> view) {
-        this.view = view;
+    public void setView(IAdapterView<SKSensor> iView) {
+        this.view = iView;
     }
 
 
@@ -122,9 +119,9 @@ public class StopwatchIListPresenter implements android.view.View.OnClickListene
      * @return An observer that waits on StopwatchService sensors
      */
     private Observable<List<SKSensor>> getObservable(){
-        return stopwatchService.getSKSensors()
-                .subscribeOn(IScheduler.backgroundThread())
-                .observeOn(IScheduler.mainThread());
+        return sensorService.getSKSensors()
+                .subscribeOn(scheduler.backgroundThread())
+                .observeOn(scheduler.mainThread());
     }
 
 

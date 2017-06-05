@@ -2,10 +2,9 @@ package net.sereko.incense.tasks;
 
 import net.sereko.incense.R;
 import net.sereko.incense.model.Task;
-import net.sereko.incense.presenter.IListPresenter;
+import net.sereko.incense.presenter.IAdapterPresenter;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IListView;
-import net.sereko.incense.view.IView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.List;
 
@@ -18,14 +17,14 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 2/20/17.
  */
 
-public class TaskListPresenter implements IListPresenter<Task>, android.view.View.OnClickListener {
-    private final String TAG = TaskListPresenter.class.getSimpleName();
+public class TaskPresenter implements IAdapterPresenter<Task>, android.view.View.OnClickListener {
+    private final String TAG = TaskPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private TaskService taskService;
     private IScheduler scheduler;
-    private IListView<Task> view;
+    private IAdapterView<Task> view;
 
-    TaskListPresenter(TaskService service, IScheduler scheduler, IListView<Task> view){
+    TaskPresenter(TaskService service, IScheduler scheduler, IAdapterView<Task> view){
         super();
         this.taskService = service;
         this.view = view;
@@ -73,13 +72,9 @@ public class TaskListPresenter implements IListPresenter<Task>, android.view.Vie
         this.view = null;
     }
 
-    @Override
-    public void setView(IView<Task> iView) {
-
-    }
 
     @Override
-    public void setView(IListView<Task> IView) {
+    public void setView(IAdapterView<Task> IView) {
         this.view = IView;
     }
 

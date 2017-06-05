@@ -1,7 +1,7 @@
 package net.sereko.incense.decisions;
 
 import net.sereko.incense.model.Decision;
-import net.sereko.incense.view.IView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.List;
 
@@ -16,10 +16,10 @@ public class DecisionService {
 
     private static final String TAG = DecisionService.class.getSimpleName();
 
-    private IView<Decision> view;
+    private IAdapterView<Decision> view;
 
 
-    public DecisionService(IView<Decision> view) {
+    public DecisionService(IAdapterView<Decision> view) {
         super();
         this.view = view;
     }

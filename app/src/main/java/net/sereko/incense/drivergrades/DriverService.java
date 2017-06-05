@@ -23,7 +23,6 @@ public class DriverService {
     private static final String TAG = DriverService.class.getSimpleName();
 
     public SensorManager sensorManager;
-    //private IListView<SKSensor> view;
     private SensorListener sensorListener;
 
     private class SensorListener implements SensorEventListener {

@@ -7,7 +7,7 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 import net.sereko.incense.model.SKSensor;
-import net.sereko.incense.view.IListView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class SensorService{
     private static final String TAG = SensorService.class.getSimpleName();
 
     public SensorManager sensorManager;
-    private IListView<SKSensor> view;
+    private IAdapterView<SKSensor> view;
     private SensorListener sensorListener;
 
     private class SensorListener implements SensorEventListener {
@@ -89,7 +89,7 @@ public class SensorService{
         }
     }
 
-    public SensorService(IListView<SKSensor> view, SensorManager sensorManager) {
+    public SensorService(IAdapterView<SKSensor> view, SensorManager sensorManager) {
         super();
         this.view = view;
         this.sensorManager = sensorManager;

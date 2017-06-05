@@ -14,11 +14,11 @@ import android.widget.TimePicker;
 import net.sereko.incense.R;
 import net.sereko.incense.model.SKSensor;
 import net.sereko.incense.sensors.SensorAdapter;
-import net.sereko.incense.sensors.SensorListPresenter;
+import net.sereko.incense.sensors.SensorListAdapterPresenter;
 import net.sereko.incense.sensors.SensorService;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IListView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class StopwatchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IListView<SKSensor> {
+public class StopwatchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IAdapterView<SKSensor> {
 
     private final String TAG = StopwatchActivity.class.getSimpleName();
 
@@ -50,7 +50,7 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
     @Inject
     IScheduler IScheduler;
 
-    private SensorListPresenter presenter;
+    private SensorListAdapterPresenter presenter;
     public SensorAdapter adapter;
 
     // @TODO
@@ -71,7 +71,7 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
         IScheduler = new AppScheduler();
         service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new SensorListPresenter(service, IScheduler, this);
+        presenter = new SensorListAdapterPresenter(service, IScheduler, this);
         //floatingActionButton.setOnClickListener(presenter);
 
         watch.setIs24HourView(true);
@@ -130,10 +130,6 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
         //loadingView.setVisibility(isLoading ? android.view.IView.VISIBLE : android.view.IView.GONE);
     }
 
-    @Override
-    public void setModel(SKSensor item) {
-
-    }
 
     @Override
     public void setModel(List<SKSensor> object) {

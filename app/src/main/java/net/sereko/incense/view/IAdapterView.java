@@ -3,10 +3,10 @@ package net.sereko.incense.view;
 import java.util.List;
 
 /**
- * Created by steve on 3/21/17.
+ * Created by steve on 6/5/17.
  */
 
-public interface IListView<V> extends IView<V> {
+public interface IAdapterView<V> extends IView {
     void addItem(V object);
     V getItem(int i );
     int getItemCount();

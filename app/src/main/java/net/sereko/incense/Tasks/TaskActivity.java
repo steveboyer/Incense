@@ -15,7 +15,7 @@ import net.sereko.incense.R;
 import net.sereko.incense.model.Task;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IListView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 
-public class TaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IListView<Task> {
+public class TaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IAdapterView<Task> {
     private static final String TAG = TaskActivity.class.getSimpleName();
 
     @Bind(R.id.listview)
@@ -47,7 +47,7 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
     @Inject
     IScheduler IScheduler;
 
-    private TaskListPresenter presenter;
+    private TaskPresenter presenter;
     private TaskAdapter adapter;
 
     @Override
@@ -63,7 +63,7 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
         IScheduler = new AppScheduler();
         service = new TaskService();
 
-        presenter = new TaskListPresenter(service, IScheduler, this);
+        presenter = new TaskPresenter(service, IScheduler, this);
         //presenter.setView(this);
 
         floatingActionButton.setOnClickListener(presenter);
@@ -136,10 +136,6 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
         loadingView.setVisibility(isLoading ? android.view.View.VISIBLE : android.view.View.GONE);
     }
 
-    @Override
-    public void setModel(Task item) {
-
-    }
 
     @Override
     public void setModel(List<Task> tasks) {

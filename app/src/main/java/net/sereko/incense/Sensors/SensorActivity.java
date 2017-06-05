@@ -18,7 +18,7 @@ import net.sereko.incense.R;
 import net.sereko.incense.model.SKSensor;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
-import net.sereko.incense.view.IListView;
+import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class SensorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IListView<SKSensor> {
+public class SensorActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, IAdapterView<SKSensor> {
 
     private final String TAG = SensorActivity.class.getSimpleName();
 
@@ -56,7 +56,7 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     @Inject
     IScheduler scheduler;
 
-    private SensorListPresenter presenter;
+    private SensorListAdapterPresenter presenter;
     public SensorAdapter adapter;
 
     // @TODO
@@ -77,7 +77,7 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
         scheduler = new AppScheduler();
         service = new SensorService(this, (SensorManager)this.getSystemService(SENSOR_SERVICE));
 
-        presenter = new SensorListPresenter(service, scheduler, this);
+        presenter = new SensorListAdapterPresenter(service, scheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);
@@ -134,10 +134,6 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
         loadingView.setVisibility(isLoading ? android.view.View.VISIBLE : android.view.View.GONE);
     }
 
-    @Override
-    public void setModel(SKSensor item) {
-
-    }
 
     @Override
     public void setModel(List<SKSensor> object) {

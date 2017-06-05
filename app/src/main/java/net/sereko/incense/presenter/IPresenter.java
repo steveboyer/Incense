@@ -3,16 +3,13 @@ package net.sereko.incense.presenter;
 import net.sereko.incense.view.IView;
 
 /**
- * Created by steve on 5/29/17.
+ * Created by steve on 6/5/17.
  */
 
-public interface IPresenter <V> {
-        void start();
+public interface IPresenter  {
+    void start();
 
-        void finish();
+    void finish();
 
-        void setView(IView<V> iView);
-
-
-
+    void setView(IView iView);
 }

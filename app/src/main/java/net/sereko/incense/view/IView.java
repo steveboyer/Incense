@@ -8,7 +8,6 @@ import android.app.Activity;
 
 public interface IView {
     void setLoading(boolean isLoading);
-    void setModel();
     void error(Throwable t);
     Activity getActivity();
 }
