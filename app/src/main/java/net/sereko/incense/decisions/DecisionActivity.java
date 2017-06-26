@@ -18,6 +18,7 @@ import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,7 +53,7 @@ public class DecisionActivity extends AppCompatActivity implements IAdapterView<
     @Inject
     IScheduler IScheduler;
 
-    private DecisionListAdapterPresenter presenter;
+    private DecisionPresenter presenter;
 
     // @TODO
     // Loading, floating button
@@ -71,7 +72,7 @@ public class DecisionActivity extends AppCompatActivity implements IAdapterView<
         IScheduler = new AppScheduler();
         service = new DecisionService(this);
 
-        presenter = new DecisionListAdapterPresenter(service, IScheduler, this);
+        presenter = new DecisionPresenter(service, IScheduler, this);
         floatingActionButton.setOnClickListener(presenter);
 
         //presenter.setView(this);
@@ -153,5 +154,10 @@ public class DecisionActivity extends AppCompatActivity implements IAdapterView<
 
     public Activity getActivity(){
         return this;
+    }
+
+    @Override
+    public void setModel(HashMap<String, String> model) {
+
     }
 }

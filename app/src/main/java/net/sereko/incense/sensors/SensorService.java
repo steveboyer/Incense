@@ -19,7 +19,7 @@ import rx.Subscriber;
  * Created by steve on 2/27/17.
  */
 
-public class SensorService{
+public class SensorService {
 
     private static final String TAG = SensorService.class.getSimpleName();
 

@@ -18,6 +18,7 @@ import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -169,5 +170,10 @@ public class TaskActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public Activity getActivity(){
         return this;
+    }
+
+    @Override
+    public void setModel(HashMap<String, String> model) {
+
     }
 }

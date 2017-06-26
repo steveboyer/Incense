@@ -15,15 +15,15 @@ import rx.subscriptions.Subscriptions;
  * Created by steve on 1/25/17.
  */
 
-public class DecisionListAdapterPresenter implements android.view.View.OnClickListener, IAdapterPresenter<Decision> {
+public class DecisionPresenter implements android.view.View.OnClickListener, IAdapterPresenter<Decision> {
 
-    private final String TAG = DecisionListAdapterPresenter.class.getSimpleName();
+    private final String TAG = DecisionPresenter.class.getSimpleName();
     private Subscription subscription = Subscriptions.empty();
     private DecisionService decisionService;
     private IScheduler IScheduler;
     private IAdapterView<Decision> decisionView;
 
-    public DecisionListAdapterPresenter(DecisionService service, IScheduler IScheduler, IAdapterView<Decision> IView){
+    public DecisionPresenter(DecisionService service, IScheduler IScheduler, IAdapterView<Decision> IView){
         super();
         this.decisionService = service;
         this.IScheduler = IScheduler;

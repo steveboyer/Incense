@@ -21,6 +21,7 @@ import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,6 +53,7 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
 
     private SensorPresenter presenter;
     public SensorAdapter adapter;
+
 
     // @TODO
     // Loading, floating button
@@ -169,5 +171,10 @@ public class StopwatchActivity extends AppCompatActivity implements AdapterView.
 
     public Activity getActivity(){
         return this;
+    }
+
+    @Override
+    public void setModel(HashMap<String, String> model) {
+
     }
 }

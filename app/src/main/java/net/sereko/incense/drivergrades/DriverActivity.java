@@ -2,16 +2,11 @@ package net.sereko.incense.drivergrades;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.util.Log;
 import android.view.Menu;
@@ -19,13 +14,16 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import net.sereko.incense.R;
 import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IView;
 
-import java.util.Formatter;
-import java.util.Locale;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -33,14 +31,17 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 
+
 /**
  * Created by steve on 2/15/17.
  */
 
-public class DriverActivity extends AbstractPermissionsActivity implements LocationListener, OnRequestPermissionsResultCallback, IView {
+public class DriverActivity extends AbstractPermissionsActivity implements OnRequestPermissionsResultCallback, IView {
 
     private final String TAG = DriverActivity.class.getSimpleName();
     private final int PERMISSION_GPS = 0;
+    private final Handler mHandler = new Handler();
+    HashMap<String, String> model;
 //    @Bind(R.id.loading)
 //    ProgressBar loadingView;
 
@@ -62,22 +63,39 @@ public class DriverActivity extends AbstractPermissionsActivity implements Locat
     @Bind(R.id.txtCurrentAltitude)
     TextView txtCurrentAltitude;
 
+    @Bind(R.id.txtCurrentAccel)
+    TextView txtCurrentAccel;
+
+    @Bind(R.id.txtCurrentGravity)
+    TextView txtCurrentGravity;
+
+    @Bind(R.id.graph1)
+    GraphView graph1;
+
+//    @Bind(R.id.graph2)
+//    GraphView graph2;
+//
+//    @Bind(R.id.graph3)
+//    GraphView graph3;
+
+    LineGraphSeries<DataPoint> series1, series2, series3;
+
     @Inject
     DriverService service;
 
     @Inject
     IScheduler scheduler;
 
+    private Runnable mTimer;
+    private double graphLastXValue = 0d;
+
+    int dataPoint;
+
     private DriverPresenter presenter;
-    public DriverAdapter adapter;
 
-    // @TODO
-    // Loading, floating button
+    private LocationManager lm;
 
-    @Override
-    protected String[] getDesiredPermissions() {
-        return new String[0];
-    }
+    private static final String[] PERMS = {Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
     protected void onPermissionDenied() {
@@ -103,133 +121,58 @@ public class DriverActivity extends AbstractPermissionsActivity implements Locat
 
         presenter = new DriverPresenter(service, scheduler, this);
 
-        //presenter.setView(this);
+        presenter.setView(this);
         presenter.start();
 
-//
-//        if(savedInstanceState != null){
-//            Boolean isInPermission = savedInstanceState.getBoolean(STATE_IN_PERMISSION, false);
-//        }
+        series1 = new LineGraphSeries<>();
+//        series2 = new LineGraphSeries<>();
+//        series3 = new LineGraphSeries<>();
+//        graph.getViewport().setXAxisBoundsManual(true);
+//        graph.getViewport().setMaxX(100);
+//        graph.getViewport().setMinX(0);
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        // Criteria for picking provider (e.g. GPS)
-        Criteria c = new Criteria();
-        c.setAccuracy(Criteria.ACCURACY_FINE);
-        c.setAltitudeRequired(true);
-
-        String lmName = locationManager.getBestProvider(c, false);// return disabled ones too
-
-        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-
-        Log.w(TAG, "Checking permissions...");// @TODO Add more permissions code like implementing methods from AbstractPerms
-        // Check/request the permisson
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            test(locationManager, lmName);
-        } else {
-            Log.w(TAG, "Deciding...");
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)){
-                ActivityCompat.requestPermissions(this, perms, PERMISSION_GPS);
-                // Async request!!
-                Log.w(TAG, "Requesting permission...");
+        graph1.addSeries(series1);
+//        graph2.addSeries(series2);
+//        graph3.addSeries(series3);
 
 
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            } else { // nope
-                Log.w(TAG, "Also requesting here.");
-                ActivityCompat.requestPermissions(this, perms, PERMISSION_GPS);
-                test(locationManager, lmName);
-            }
-        }
+        dataPoint = 0;
+
+
     }
 
-    @SuppressWarnings({"MissingPermission"})
-    public void test(LocationManager locationManager, String lmName){
-        // Test
-        Log.w(TAG, "Getting altitute");
-        Location l = locationManager.getLastKnownLocation(lmName);
-        Log.w(TAG, String.valueOf(l.getAltitude() * 3.2808));
-        txtCurrentLatitude.setText(String.valueOf(l.getLatitude()));
-        txtCurrentLongitude.setText(String.valueOf(l.getLongitude()));
-        txtCurrentSpeed.setText(String.valueOf(l.getSpeed()));
-        txtCurrentAltitude.setText(String.valueOf(l.getAltitude() * 3.2808));
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        this.updateSpeed(null);
+    public void updateLocationText(String latitude, String longitude, String speed, String altitude){
+        txtCurrentLatitude.setText(latitude);
+        txtCurrentLongitude.setText(longitude);
+        txtCurrentSpeed.setText(speed);
+        txtCurrentAltitude.setText(altitude);
     }
 
-    public void finish()
-    {
-        super.finish();
-        System.exit(0);
+    public void updateAccelText(String x, String y, String z){
+        String newText = "(" + x + "," + y + "," + z + ")";
+        txtCurrentAccel.setText(newText);
     }
 
-    private void updateSpeed(CLocation location) {
-        float nCurrentSpeed = 0;
-
-        if(location != null)
-        {
-            location.setUseMetricunits(this.useMetricUnits());
-            nCurrentSpeed = location.getSpeed();
-        }
-
-        Formatter fmt = new Formatter(new StringBuilder());
-        fmt.format(Locale.US, "%5.1f", nCurrentSpeed);
-        String strCurrentSpeed = fmt.toString();
-        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
-
-        String strUnits = "miles/hour";
-        if(this.useMetricUnits())
-        {
-            strUnits = "meters/second";
-        }
-
-//        TextView txtCurrentSpeed = (TextView) this.findViewById(R.id.txtCurrentSpeed);
-//        txtCurrentSpeed.setText(strCurrentSpeed + " " + strUnits);
-    }
-
-    private boolean useMetricUnits() {
-        // TODO Auto-generated method stub
-//        CheckBox chkUseMetricUnits = (CheckBox) this.findViewById(R.id.chkMetricUnits);
-//        return chkUseMetricUnits.isChecked();
-        return false;
+    public void updateGravText(String x, String y, String z){
+        String newText = "(" + x + "," + y + "," + z + ")";
+        txtCurrentGravity.setText(newText);
     }
 
     @Override
-    @SuppressWarnings({"MissingPermission"})
-    public void onLocationChanged(Location location) {
-        {
-            CLocation myLocation = new CLocation(location, this.useMetricUnits());
-            this.updateSpeed(myLocation);
-        }
+    public void onStart(){
+        super.onStart();
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
-        Log.d(TAG, "Disabled");
-        Log.d(TAG, provider);
-
+    public void onPause(){
+        mHandler.removeCallbacks(mTimer);
+        super.onPause();
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-        Log.d(TAG, "Enabled");
-        Log.d(TAG, provider);
-    }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
-
+    public void onStop(){
+        super.onStop();
     }
 
     @Override
@@ -271,6 +214,11 @@ public class DriverActivity extends AbstractPermissionsActivity implements Locat
     }
 
     @Override
+    protected String[] getDesiredPermissions(){
+        return(PERMS);
+    }
+
+    @Override
     public void error(Throwable t) {
 
     }
@@ -278,4 +226,41 @@ public class DriverActivity extends AbstractPermissionsActivity implements Locat
     public Activity getActivity(){
         return this;
     }
+
+    @Override
+    public void setModel(HashMap<String, String> model) {
+        this.model = model;
+        updateText(model);
+    }
+
+    public void updateText(HashMap<String, String> model) {
+        updateLocationText(model.get("lat"), model.get("long"), model.get("speed"), model.get("alt"));
+        updateAccelText(model.get("accelx"), model.get("accely"), model.get("accelz"));
+        updateGravText(model.get("gravx"), model.get("gravy"), model.get("gravz"));
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        mTimer = new Runnable() {
+
+            @Override
+            public void run() {
+                graphLastXValue += 1d;
+
+                Double dx = model.get("accelx").isEmpty() ? 0d : Double.parseDouble(model.get("accelx"));
+                Double dy = model.get("accely").isEmpty() ? 0d : Double.parseDouble(model.get("accely"));
+                Double dz = model.get("accelz").isEmpty() ? 0d : Double.parseDouble(model.get("accelz"));
+                series1.appendData(new DataPoint(graphLastXValue, dx), false, 40);
+//                series2.appendData(new DataPoint(graphLastXValue, dy), false, 40);
+//                series3.appendData(new DataPoint(graphLastXValue, dz), false, 40);
+                mHandler.postDelayed(this, 3000);
+            }
+        };
+        mHandler.postDelayed(mTimer, 100);
+    }
+
+
+
 }
