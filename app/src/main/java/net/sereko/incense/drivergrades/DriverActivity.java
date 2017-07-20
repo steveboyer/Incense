@@ -2,19 +2,20 @@ package net.sereko.incense.drivergrades;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -23,7 +24,11 @@ import net.sereko.incense.util.AppScheduler;
 import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IView;
 
-import java.util.HashMap;
+import java.io.File;
+import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -36,15 +41,18 @@ import icepick.Icepick;
  * Created by steve on 2/15/17.
  */
 
-public class DriverActivity extends AbstractPermissionsActivity implements OnRequestPermissionsResultCallback, IView {
+public class DriverActivity extends AbstractPermissionsActivity implements OnRequestPermissionsResultCallback, IView, SurfaceHolder.Callback {
 
     private final String TAG = DriverActivity.class.getSimpleName();
     private final int PERMISSION_GPS = 0;
     private final Handler mHandler = new Handler();
-    HashMap<String, String> model;
+    DriverModel model;
+    DecimalFormat df = new DecimalFormat("#.##");
+    DecimalFormat dfloc = new DecimalFormat("#.####");
+
 //    @Bind(R.id.loading)
 //    ProgressBar loadingView;
-
+//
 //    @Bind(R.id.toolbar)
 //    Toolbar toolbar;
 //
@@ -69,8 +77,12 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     @Bind(R.id.txtCurrentGravity)
     TextView txtCurrentGravity;
 
-    @Bind(R.id.graph1)
-    GraphView graph1;
+    @Bind(R.id.driver_layout)
+    LinearLayout driverLayout;
+
+
+//    @Bind(R.id.graph1)
+//    GraphView graph1;
 
 //    @Bind(R.id.graph2)
 //    GraphView graph2;
@@ -91,11 +103,16 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
 
     int dataPoint;
 
+    private Random rand = new Random();
     private DriverPresenter presenter;
 
     private LocationManager lm;
 
     private static final String[] PERMS = {Manifest.permission.ACCESS_FINE_LOCATION};
+
+    private long lastUpdated;
+
+    private int UPDATE_RATE = 5; // Hz
 
     @Override
     protected void onPermissionDenied() {
@@ -110,10 +127,10 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.w(TAG, TAG);
+        //Log.w(TAG, TAG);
         setContentView(R.layout.driver_main);
         ButterKnife.bind(this);
-        // setSupportActionBar(toolbar);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         scheduler = new AppScheduler();
@@ -123,38 +140,55 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
 
         presenter.setView(this);
         presenter.start();
+        df.setRoundingMode(RoundingMode.CEILING);
 
-        series1 = new LineGraphSeries<>();
+        GMeter gmeter = new GMeter(getApplicationContext());
+        driverLayout.addView(gmeter);
+
+        final GMeter gMeter = (GMeter) findViewById(R.id.meter);
+
+
+        df.setMinimumIntegerDigits(1);
+        df.setMinimumFractionDigits(2);
+
+        dfloc.setMinimumFractionDigits(4);
+        dfloc.setMinimumIntegerDigits(3);
+
+        df.setNegativePrefix("");
+        lastUpdated = System.currentTimeMillis();
+//        series1 = new LineGraphSeries<>();
+
+        //MeterView meterView = (MeterView) findViewById(R.id.surfaceView);
+
 //        series2 = new LineGraphSeries<>();
 //        series3 = new LineGraphSeries<>();
 //        graph.getViewport().setXAxisBoundsManual(true);
 //        graph.getViewport().setMaxX(100);
 //        graph.getViewport().setMinX(0);
 
-        graph1.addSeries(series1);
+//        graph1.addSeries(series1);
 //        graph2.addSeries(series2);
 //        graph3.addSeries(series3);
 
-
         dataPoint = 0;
-
-
     }
 
-    public void updateLocationText(String latitude, String longitude, String speed, String altitude){
-        txtCurrentLatitude.setText(latitude);
-        txtCurrentLongitude.setText(longitude);
-        txtCurrentSpeed.setText(speed);
-        txtCurrentAltitude.setText(altitude);
+    public void updateLocationText(Double latitude, Double longitude, Double speed, Double altitude){
+        txtCurrentLatitude.setText(dfloc.format(latitude));
+        txtCurrentLongitude.setText(dfloc.format(longitude));
+        txtCurrentSpeed.setText(df.format(speed * 2.23694));
+        txtCurrentAltitude.setText(df.format(altitude * 3.28084));
     }
 
-    public void updateAccelText(String x, String y, String z){
-        String newText = "(" + x + "," + y + "," + z + ")";
+    public void updateAccelText(Double x, Double y, Double z){
+        String newText = df.format(x) + " " + df.format(y) + " " + df.format(z);
+        //if(rand.nextDouble() > 0.9) Log.d(TAG, newText.replace(',', ' ').replace(')', ' '));
         txtCurrentAccel.setText(newText);
     }
 
-    public void updateGravText(String x, String y, String z){
-        String newText = "(" + x + "," + y + "," + z + ")";
+    public void updateGravText(Double x, Double y, Double z){
+        String newText = " " + df.format(x) + " " + df.format(y) + " " + df.format(z);
+        //if(rand.nextDouble() > 0.9) Log.d(TAG, newText);
         txtCurrentGravity.setText(newText);
     }
 
@@ -163,15 +197,26 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
         super.onStart();
     }
 
+    public static void saveLogcatToFile(Context context) {
+        String fileName = "logcat_"+System.currentTimeMillis()+".txt";
+        File outputFile = new File(context.getExternalCacheDir(),fileName);
+        try {
+            @SuppressWarnings("unused")
+            Process process = Runtime.getRuntime().exec("logcat -f "+outputFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onPause(){
         mHandler.removeCallbacks(mTimer);
         super.onPause();
     }
 
-
     @Override
     public void onStop(){
+        saveLogcatToFile(getApplicationContext());
         super.onStop();
     }
 
@@ -228,15 +273,20 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     }
 
     @Override
-    public void setModel(HashMap<String, String> model) {
-        this.model = model;
-        updateText(model);
+    public void setModel(Object model) {
+        this.model = (DriverModel)model;
+
+
+        if((System.currentTimeMillis() - lastUpdated) > 1.0/UPDATE_RATE){
+            updateText(this.model);
+            lastUpdated = System.currentTimeMillis();
+        }
     }
 
-    public void updateText(HashMap<String, String> model) {
-        updateLocationText(model.get("lat"), model.get("long"), model.get("speed"), model.get("alt"));
-        updateAccelText(model.get("accelx"), model.get("accely"), model.get("accelz"));
-        updateGravText(model.get("gravx"), model.get("gravy"), model.get("gravz"));
+    public void updateText(DriverModel model) {
+        updateLocationText(model.getLatitude(),model.getLongitude(), model.getSpeed(), model.getAltitude());
+        updateAccelText(model.getAcceleration().getX(), model.getAcceleration().getY(), model.getAcceleration().getZ());
+        updateGravText(model.getGravity().getX(), model.getGravity().getY(), model.getGravity().getZ());
     }
 
     @Override
@@ -249,10 +299,10 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
             public void run() {
                 graphLastXValue += 1d;
 
-                Double dx = model.get("accelx").isEmpty() ? 0d : Double.parseDouble(model.get("accelx"));
-                Double dy = model.get("accely").isEmpty() ? 0d : Double.parseDouble(model.get("accely"));
-                Double dz = model.get("accelz").isEmpty() ? 0d : Double.parseDouble(model.get("accelz"));
-                series1.appendData(new DataPoint(graphLastXValue, dx), false, 40);
+//                Double dx = model.get("accelx").isEmpty() ? 0d : Double.parseDouble(model.get("accelx"));
+//                Double dy = model.get("accely").isEmpty() ? 0d : Double.parseDouble(model.get("accely"));
+//                Double dz = model.get("accelz").isEmpty() ? 0d : Double.parseDouble(model.get("accelz"));
+//                series1.appendData(new DataPoint(graphLastXValue, dx), false, 40);
 //                series2.appendData(new DataPoint(graphLastXValue, dy), false, 40);
 //                series3.appendData(new DataPoint(graphLastXValue, dz), false, 40);
                 mHandler.postDelayed(this, 3000);
@@ -261,6 +311,18 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
         mHandler.postDelayed(mTimer, 100);
     }
 
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
 
+    }
 
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
 }

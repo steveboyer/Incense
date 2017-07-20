@@ -21,7 +21,6 @@ import net.sereko.incense.util.IScheduler;
 import net.sereko.incense.view.IAdapterView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -178,7 +177,7 @@ public class SensorActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     @Override
-    public void setModel(HashMap<String, String> model) {
+    public void setModel(Object model) {
 
     }
 }

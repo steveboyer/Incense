@@ -13,7 +13,7 @@ import android.os.Bundle;
 public class LocationListener implements android.location.LocationListener {
     private LocationManager lm;
     private DriverPresenter presenter;
-    private LocationAveragerController averager;
+    //private LocationAveragerController averager;
 
 
     @SuppressWarnings({"MissingPermission"})
@@ -23,14 +23,14 @@ public class LocationListener implements android.location.LocationListener {
         lm = (LocationManager) presenter.getContext().getSystemService(Context.LOCATION_SERVICE);
         Location lastKnown = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        averager = new LocationAveragerController(new SLocation(lastKnown.getLongitude(), lastKnown.getLatitude(), lastKnown.getAltitude(), lastKnown.getSpeed()));
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30, Criteria.ACCURACY_FINE, this);
+        presenter.onLocationChanged(new SLocation(lastKnown.getLongitude(), lastKnown.getLatitude(), lastKnown.getAltitude(), lastKnown.getSpeed()));
     }
 
     @Override
     @SuppressWarnings({"MissingPermission"})
     public void onLocationChanged(Location location) {
-        presenter.onLocationChanged(averager.updateAverage( new SLocation(location.getLongitude(), location.getLatitude(), location.getAltitude(), location.getSpeed())));
+        presenter.onLocationChanged(new SLocation(location.getLongitude(), location.getLatitude(), location.getAltitude(), location.getSpeed()));
     }
 
 
