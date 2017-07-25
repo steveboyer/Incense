@@ -77,13 +77,13 @@ public class DriverPresenter implements IPresenter {
     }
 
     public void onGravityChanged(Vector3D gravity){
-        model.setGravity(gravity);
+        model.setGrav(gravity);
 
         view.setModel(model);
     }
 
     public void onAccelChanged(Vector3D accel){
-        model.setAcceleration(accel);
+        model.setAccel(accel);
 
         view.setModel(model);
     }

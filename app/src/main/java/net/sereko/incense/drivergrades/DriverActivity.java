@@ -74,12 +74,29 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     @Bind(R.id.txtCurrentAccel)
     TextView txtCurrentAccel;
 
-    @Bind(R.id.txtCurrentGravity)
+    @Bind(R.id.txtCurrentGrav)
     TextView txtCurrentGravity;
 
     @Bind(R.id.driver_layout)
     LinearLayout driverLayout;
 
+    @Bind(R.id.txtGravMag)
+    TextView txtGravMag;
+
+    @Bind(R.id.txtGravAvg)
+    TextView txtGravAvg;
+
+    @Bind(R.id.txtGravMagAvg)
+    TextView txtGravMagAvg;
+
+    @Bind(R.id.txtAccelMag)
+    TextView txtAccelMag;
+
+    @Bind(R.id.txtAccelAvg)
+    TextView txtAccelAvg;
+
+    @Bind(R.id.txtAccelMagAvg)
+    TextView txtAccelMagAvg;
 
 //    @Bind(R.id.graph1)
 //    GraphView graph1;
@@ -127,7 +144,7 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.w(TAG, TAG);
+
         setContentView(R.layout.driver_main);
         ButterKnife.bind(this);
 
@@ -180,16 +197,17 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
         txtCurrentAltitude.setText(df.format(altitude * 3.28084));
     }
 
-    public void updateAccelText(Double x, Double y, Double z){
-        String newText = df.format(x) + " " + df.format(y) + " " + df.format(z);
-        //if(rand.nextDouble() > 0.9) Log.d(TAG, newText.replace(',', ' ').replace(')', ' '));
+    public void updateAccelText(Vector3D accel){
+        String newText = df.format(accel.getX()) + " " + df.format(accel.getY()) + " " + df.format(accel.getZ());
         txtCurrentAccel.setText(newText);
+        txtAccelMag.setText(df.format(accel.getMagnitude()) + " at " + df.format(accel.getAngleH() * 180 / Math.PI) + "º H and " + df.format(accel.getAngleV() * 180 / Math.PI) + "º V");
+
     }
 
-    public void updateGravText(Double x, Double y, Double z){
-        String newText = " " + df.format(x) + " " + df.format(y) + " " + df.format(z);
-        //if(rand.nextDouble() > 0.9) Log.d(TAG, newText);
+    public void updateGravText(Vector3D grav){
+        String newText = " " + df.format(grav.getX()) + " " + df.format(grav.getY()) + " " + df.format(grav.getZ());
         txtCurrentGravity.setText(newText);
+        txtGravMag.setText(df.format(grav.getMagnitude()) + " at " + df.format(grav.getAngleH() * 180 / Math.PI) + "º H and " + df.format(grav.getAngleV() * 180 / Math.PI) + "º V");
     }
 
     @Override
@@ -285,8 +303,8 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
 
     public void updateText(DriverModel model) {
         updateLocationText(model.getLatitude(),model.getLongitude(), model.getSpeed(), model.getAltitude());
-        updateAccelText(model.getAcceleration().getX(), model.getAcceleration().getY(), model.getAcceleration().getZ());
-        updateGravText(model.getGravity().getX(), model.getGravity().getY(), model.getGravity().getZ());
+        updateAccelText(model.getAccel());
+        updateGravText(model.getGrav());
     }
 
     @Override

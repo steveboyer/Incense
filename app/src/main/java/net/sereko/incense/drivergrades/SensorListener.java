@@ -22,7 +22,7 @@ public class SensorListener implements SensorEventListener {
     public SensorListener(DriverPresenter presenter){
         super();
         this.presenter = presenter;
-        //this.averager = new SensorAveragerController();
+
     }
 
     @Override

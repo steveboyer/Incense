@@ -63,7 +63,7 @@ public class Vector3D {
      * anglev: Angle to left- or right+
      * anglev = angleh = 0 means no acceleration or acceleration directly along line of motion
      */
-    public double getAnglev(){
+    public double getAngleV(){
         return Math.atan(z/x);
     }
 }

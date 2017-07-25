@@ -1,8 +1,6 @@
 package net.sereko.incense.drivergrades;
 
 
-import net.sereko.incense.decisions.ExponentialMovingAverage;
-
 import org.junit.Test;
 
 /**

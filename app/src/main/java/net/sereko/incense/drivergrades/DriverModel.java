@@ -6,8 +6,12 @@ package net.sereko.incense.drivergrades;
 
 public class DriverModel {
     private double latitude, longitude, speed, altitude;
-    private Vector3D acceleration;
-    private Vector3D gravity;
+    private Vector3D accel;
+
+
+
+    private Vector3D accelAvg;
+    private Vector3D grav, gravAvg;
 
     public DriverModel(){
         this.latitude = 0d;
@@ -15,8 +19,10 @@ public class DriverModel {
         this.speed = 0d;
         this.altitude = 0d;
 
-        this.acceleration = new Vector3D(0d, 0d, 0d);
-        this.gravity = new Vector3D(0d, 0d, 0d);
+        this.accel = new Vector3D(0d, 0d, 0d);
+        this.grav = new Vector3D(0d, 0d, 0d);
+        this.accelAvg = new Vector3D(0d, 0d, 0d);
+        this.gravAvg = new Vector3D(0d, 0d, 0d);
     }
 
     public double getLatitude() {
@@ -51,20 +57,36 @@ public class DriverModel {
         this.altitude = altitude;
     }
 
-    public Vector3D getAcceleration() {
-        return acceleration;
+    public Vector3D getAccel() {
+        return accel;
     }
 
-    public Vector3D getGravity() {
-        return gravity;
+    public Vector3D getGrav() {
+        return grav;
     }
 
-    public void setGravity(Vector3D gravity){
-        this.gravity = gravity;
+    public void setGrav(Vector3D grav){
+        this.grav = grav;
     }
 
-    public void setAcceleration(Vector3D acceleration){
-        this.acceleration = acceleration;
+    public void setAccel(Vector3D accel){
+        this.accel = accel;
+    }
+
+    public Vector3D getAccelAvg() {
+        return accelAvg;
+    }
+
+    public void setAccelAvg(Vector3D accelAvg) {
+        this.accelAvg = accelAvg;
+    }
+
+    public Vector3D getGravAvg() {
+        return gravAvg;
+    }
+
+    public void setGravAvg(Vector3D gravAvg) {
+        this.gravAvg = gravAvg;
     }
 
 }
