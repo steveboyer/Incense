@@ -127,9 +127,10 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
 
     private static final String[] PERMS = {Manifest.permission.ACCESS_FINE_LOCATION};
 
-    private long lastUpdated;
 
     private int UPDATE_RATE = 5; // Hz
+
+    private long gravLastUpdated, accelLastUpdated, locLastUpdated, lastUpdated;
 
     @Override
     protected void onPermissionDenied() {
@@ -172,7 +173,11 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
         dfloc.setMinimumIntegerDigits(3);
 
         df.setNegativePrefix("");
+        gravLastUpdated = System.currentTimeMillis();
+        accelLastUpdated = System.currentTimeMillis();
+        locLastUpdated = System.currentTimeMillis();
         lastUpdated = System.currentTimeMillis();
+
 //        series1 = new LineGraphSeries<>();
 
         //MeterView meterView = (MeterView) findViewById(R.id.surfaceView);
@@ -191,6 +196,7 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     }
 
     public void updateLocationText(Double latitude, Double longitude, Double speed, Double altitude){
+
         txtCurrentLatitude.setText(dfloc.format(latitude));
         txtCurrentLongitude.setText(dfloc.format(longitude));
         txtCurrentSpeed.setText(df.format(speed * 2.23694));
@@ -205,6 +211,7 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     }
 
     public void updateGravText(Vector3D grav){
+
         String newText = " " + df.format(grav.getX()) + " " + df.format(grav.getY()) + " " + df.format(grav.getZ());
         txtCurrentGravity.setText(newText);
         txtGravMag.setText(df.format(grav.getMagnitude()) + " at " + df.format(grav.getAngleH() * 180 / Math.PI) + "º H and " + df.format(grav.getAngleV() * 180 / Math.PI) + "º V");
@@ -294,8 +301,7 @@ public class DriverActivity extends AbstractPermissionsActivity implements OnReq
     public void setModel(Object model) {
         this.model = (DriverModel)model;
 
-
-        if((System.currentTimeMillis() - lastUpdated) > 1.0/UPDATE_RATE){
+        if((System.currentTimeMillis() - lastUpdated) > 1000.0/UPDATE_RATE){
             updateText(this.model);
             lastUpdated = System.currentTimeMillis();
         }

@@ -37,6 +37,9 @@ public class GMeter extends ViewGroup {
     private int viewWidth = 0, viewHeight = 0;
     private Point origin =  new Point(0,0);
     private Paint backgroundPaint = new Paint(background);
+    private Paint borderPaint;
+    private Paint linePaint;
+    private Paint circlePaint;
     Rect backgroundRect = new Rect(0,0,0,0);
     String TAG = this.getClass().getSimpleName();
 //    private GMeterView mGMeterView;
@@ -87,16 +90,19 @@ public class GMeter extends ViewGroup {
             origin.set(viewWidth/2, viewHeight/2);
             xLocation = origin.x;
             yLocation = origin.y;
+
         }
 
 
-        backgroundRect.set(0,0,canvas.getWidth(), canvas.getHeight());
+        //backgroundRect.set(0,0,canvas.getWidth(), canvas.getHeight());
 
        //canvas.drawRect(backgroundRect, backgroundPaint);
 
+        canvas.drawCircle(xLocation, yLocation + 100, CIRCLE_RADIUS, paint);
+        canvas.drawLine(xLocation, yLocation + 500, xLocation, yLocation, paint);
+        canvas.drawRect(0,0,viewWidth, viewHeight, borderPaint);
+        canvas.drawCircle(xLocation, yLocation + 100, CIRCLE_RADIUS * 20, borderPaint);
 
-
-        canvas.drawCircle(xLocation, yLocation, CIRCLE_RADIUS, paint);
     }
 
 
@@ -106,7 +112,7 @@ public class GMeter extends ViewGroup {
      */
     private void init() {
         setWillNotDraw(false);
-         lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,1440);
+        lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,1440);
         //LayoutParams layoutParams = new LayoutParams(300,300);
         //setLayoutParams(layoutParams);
 //
@@ -115,7 +121,10 @@ public class GMeter extends ViewGroup {
         xLocation = STARTX;
         yLocation = STARTY;
 
-
+        backgroundPaint = new Paint(Color.WHITE);
+        borderPaint = new Paint(Color.BLACK);
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(10);
 
         //setBackgroundColor(background);
 
